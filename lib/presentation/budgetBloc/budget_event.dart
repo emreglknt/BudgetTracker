@@ -26,8 +26,4 @@ class ResetBudgetStateEvent extends BudgetEvent {}
 class AuthLogoutRequest extends BudgetEvent{}
 
 
-//get sum of user expense
-class GetTotalExpense extends BudgetEvent{
-  GetTotalExpense();
-}
 

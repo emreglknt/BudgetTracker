@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:budget_family/data/model/expenseModel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import '../api/data_source.dart';
@@ -10,8 +11,7 @@ import '../api/data_source.dart';
 // Repo function implementation class
 abstract class IMainRepository{
   Future <Either<String,String>> addExpense(double expense, String category, String date);
-  Future<Either<String, List<Expense>>> getAllExpense();
-  Future<Either<String,double>> getTotalExpenses();
+  Stream<Either<String, Tuple2<List<Expense>, double>>>  getAllExpense();
 }
 
 
@@ -27,39 +27,34 @@ class MainRepository extends IMainRepository{
   @override
   Future<Either<String, String>> addExpense(double expense, String category, String date) async {
     try {
-      await budgetApi.addExpense(expense, category, date);
-      return right('Success');
+      final result = await budgetApi.addExpense(expense, category, date);
+      return right("success");
     } on DioError catch (e) {
-      return left(e.response?.data['message'] ?? 'An error occurred');
+      return left(e.toString());
     }
   }
 
 
 
 
-  // get all expenses
+
+
   @override
-  Future<Either<String, List<Expense>>> getAllExpense() async {
+  Stream<Either<String, Tuple2<List<Expense>, double>>> getAllExpense() async* {
     try {
-      final response = await budgetApi.getAllExpenses();
-      return right(response);
-    } on DioError catch (e) {
-      return left(e.response?.data['message'] ?? 'Failed to fetch expenses');
+      yield* budgetApi.getAllExpenses().map((expenseList) {
+        double totalExpense = expenseList.fold(
+          0.0,
+              (sum, item) => sum + item.price,
+        );
+        return right(Tuple2(expenseList, totalExpense));
+      });
+    } on FirebaseException catch (e) {
+      yield left(e.message ?? 'Firebase hatası oluştu.');
+    } catch (e) {
+      yield left('Harcama bilgilerini alırken hata oluştu.');
     }
   }
-
-
-  @override
-  Future<Either<String,double>>getTotalExpenses() async{
-    try{
-      final total = await budgetApi.getTotalExpenses();
-      return right(total);
-    }on DioError catch(e){
-      return left(e.response?.data['message'] ?? 'Failed to fetch expenses');
-    }
-  }
-
-
 
 
 

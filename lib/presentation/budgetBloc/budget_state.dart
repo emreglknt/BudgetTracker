@@ -10,16 +10,18 @@ class BudgetLoadingState extends BudgetState{}
 
 
 
-class AddBudgetSuccessState extends BudgetState{
-  final dynamic expense;
-  AddBudgetSuccessState(this.expense);
+class AddExpenseSuccessState extends BudgetState{
+  AddExpenseSuccessState();
 }
+
+
 
 
 
 class GetAllExpenseSuccessState extends BudgetState{
   final List<Expense> allExpenses;
-  GetAllExpenseSuccessState(this.allExpenses);
+  final double totalExpense;
+  GetAllExpenseSuccessState(this.allExpenses,this.totalExpense);
 }
 
 

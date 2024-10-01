@@ -52,7 +52,7 @@ class _AddExpenseState extends State<AddExpense> {
             }
 
 
-            if(state is AddBudgetSuccessState){
+            if(state is AddExpenseSuccessState){
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 AnimatedSnackBar.material(
                   'Added Successfully',
@@ -65,9 +65,7 @@ class _AddExpenseState extends State<AddExpense> {
                 categoryController.clear();
                 dateController.clear();
                 selectedCategoryIndex = null;
-
-                context.read<BudgetBloc>().add(ResetBudgetStateEvent());
-
+              context.read<BudgetBloc>().add(ResetBudgetStateEvent());
               });
             }
 

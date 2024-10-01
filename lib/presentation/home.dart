@@ -5,7 +5,6 @@ import 'package:budget_family/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'add_expense.dart';
 import 'budgetBloc/budget_bloc.dart';
 
@@ -65,8 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: BlocListener<BudgetBloc, BudgetState>(
         listener: (context, state) {
-          if (state is AddBudgetSuccessState){
+          if (state is AddExpenseSuccessState){
+
             context.read<BudgetBloc>().add(GetAllExpenseRequest());
+
           }
         },
         child: BlocBuilder<BudgetBloc, BudgetState>(
@@ -91,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (state is GetAllExpenseSuccessState) {
               // Harcama listesini al
               final expenses = state.allExpenses;
+              double totalExpense=state.totalExpense;
 
               return SafeArea(
                 child: SizedBox(
@@ -106,11 +108,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           thumbVisibility: true,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-                            child: Row( // Row ile kartları yatay olarak yan yana diziyoruz
+                            child: Row(
                               children: [
-                                _buildBalanceCard(expenses),
+                                _buildBalanceCard(totalExpense),
                                 const SizedBox(width: 15),
-                                _buildBalanceCard2(expenses),
+                                _buildBalanceCard2(),
                               ],
                             ),
                           ),
@@ -134,14 +136,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       _buildTransactionHistoryHeader(),
                       Expanded(
-                        child: RefreshIndicator(
-                          onRefresh: () async {
-                            context.read<BudgetBloc>().add(
-                                GetAllExpenseRequest());
-                          },
-                          child: _buildTransactionList(expenses),
-                        ),
+                        child: _buildTransactionList(expenses),
                       ),
+
                     ],
                   ),
                 ),
@@ -240,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   // 1. FIRST CARD
-  Widget _buildBalanceCard(List<Expense> expenses) {
+  Widget _buildBalanceCard(double totalExpense) {
     return Padding(
       padding: const EdgeInsets.only(top: 7.0, left: 10.0, bottom: 7.0,),
       child: SingleChildScrollView(
@@ -276,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.w500,
                             color: Colors.white)),
                     const SizedBox(height: 10),
-                    _buildIncomeExpenseRow(expenses),
+                    _buildIncomeExpenseRow(totalExpense),
                   ],
                 ),
                 const Positioned(right: 15, top: 10,
@@ -297,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //2. SECOND CARD
   //add expense and info card
-  Widget _buildBalanceCard2(List<Expense> expenses) {
+  Widget _buildBalanceCard2() {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: SingleChildScrollView(
@@ -350,12 +347,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  Widget _buildIncomeExpenseRow(List<Expense> expenses) {
+  Widget _buildIncomeExpenseRow(double totalExpense) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _buildIncomeWidget(),
-        _buildExpenseWidget(expenses),
+        _buildExpenseWidget(totalExpense),
       ],
     );
   }
@@ -389,8 +386,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildExpenseWidget(List<Expense> expenses) {
-    final budgetBloc = BlocProvider.of<BudgetBloc>(context);
+  Widget _buildExpenseWidget(double totalExpense) {
     return Row(
       children: [
         Container(
@@ -407,50 +403,10 @@ class _HomeScreenState extends State<HomeScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-
-            StreamBuilder<double>(
-              stream: budgetBloc.totalExpenseStream,
-              builder: (context, snapshot) {
-                final totalExpense = snapshot.data ?? 0.0;
-                return Text('${totalExpense.toStringAsFixed(2)} ₺', style: TextStyle(fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white));
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildExpenseWidget2(List<Expense> expenses) {
-    final budgetBloc = BlocProvider.of<BudgetBloc>(context);
-    return Row(
-      children: [
-        Container(
-          width: 30,
-          height: 30,
-          decoration: const BoxDecoration(
-              color: Colors.white54, shape: BoxShape.circle),
-          child: const Center(
-            child: Icon(
-                Icons.arrow_downward_rounded, color: Colors.red, size: 22),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            StreamBuilder<double>(
-                stream: budgetBloc.totalExpenseStream,
-                builder: (context, snapshot) {
-                  final totalExpense = snapshot.data ?? 0.0;
-                  return Text('Total Expense', style: TextStyle(fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white));
-                }
-            ),
-            Text('68000.00 ₺', style: TextStyle(fontSize: 17,
+            Text('Total Expense', style: TextStyle(fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: Colors.white)),
+            Text("$totalExpense ₺", style: TextStyle(fontSize: 17,
                 fontWeight: FontWeight.w500,
                 color: Colors.white)),
           ],
@@ -458,6 +414,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
+
+
 
   Widget _buildTransactionHistoryHeader() {
     return Padding(

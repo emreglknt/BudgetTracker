@@ -36,8 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 AnimatedSnackBar.material(
                   state.error,
-                  type: AnimatedSnackBarType.error,  // Farklı türler: success, error, info, warning
-                  mobileSnackBarPosition: MobileSnackBarPosition.bottom,  // Alt kısımda gösterilir
+                  type: AnimatedSnackBarType.error,
+                  mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                   duration: const Duration(seconds: 4),  // SnackBar'ın ekranda kalma süresi
                 ).show(context);
               });
@@ -46,7 +46,9 @@ class _LoginScreenState extends State<LoginScreen> {
             if (state is AuthSuccessState) {
               // Handle success state
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (state.token != null) {
+                  if (state.errorMessage != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+                  }
                   AnimatedSnackBar.material(
                     'Logged in Successfully',
                     type: AnimatedSnackBarType.success,  // Farklı türler: success, error, info, warning
@@ -61,9 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   );
-                } else if (state.errorMessage != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
-                }
+
               });
             }
 

@@ -14,25 +14,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
 
     //login
-    // Bloc login function
     on<AuthLoginRequest>((event, emit) async {
       emit(AuthLoadingState());
-
-      var login = await _authRepo.login(event.email, event.password);
-
-      if (login.isRight()) {
-        var response = login.getOrElse(() => {});
-        String token = response['access_token'] ?? "null";
-        String username = response['username'] ?? "unknown";
-
-        if (token != "null" && username != "unknown") {
-          emit(AuthSuccessState(token: token, username: username));
-        } else {
-          emit(AuthErrorState("Token or username is missing."));
-        }
-      } else {
-        emit(AuthErrorState(login.swap().getOrElse(() => 'Login failed')));
-      }
+      final loginResult = await _authRepo.login(event.email, event.password);
+      loginResult.fold(
+        (error) =>emit(AuthErrorState(error)),
+          (username) => emit(AuthSuccessState(username: username))
+      );
     });
 
 
@@ -52,6 +40,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         },
       );
     });
+
+
+
+
+
 
 
 

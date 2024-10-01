@@ -90,6 +90,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: usernameController,
                         decoration: const InputDecoration(
                           hintText: 'Username',
+                          hintStyle: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),
                           prefixIcon: Icon(Icons.account_circle_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -106,6 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: emailController,
                         decoration: const InputDecoration(
                           hintText: 'Email',
+                          hintStyle: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),
                           prefixIcon: Icon(Icons.email),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -122,6 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         obscureText: true,
                         decoration: const InputDecoration(
                           hintText: 'Password',
+                          hintStyle: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),
                           prefixIcon: Icon(Icons.lock),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -137,6 +140,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         obscureText: true,
                         decoration: const InputDecoration(
                           hintText: 'Re-type Password',
+                          hintStyle: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),
                           prefixIcon: Icon(Icons.lock_reset_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -190,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         style: ElevatedButton.styleFrom(
                           elevation: 3,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           backgroundColor: Colors.indigo,
                           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
