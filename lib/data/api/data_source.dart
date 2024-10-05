@@ -1,15 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rxdart/rxdart.dart';
 import '../model/expenseModel.dart';
+import '../model/pieChartModel.dart';
 
 abstract class authApiDataSource {
   Future<void> addExpense(double expense, String category, String date);
   Stream<List<Expense>> getAllExpenses();
+  Stream<Map<String, dynamic>> getAllExpensesAndIncome();
+  Future<double> addIncome(double income);
+  Stream<List<Expense>> getExpensesByCategory(List<String> categoryList);
+  Stream<Map<String, double>> getPieChartList();
 }
 
 class BudgetApi implements authApiDataSource {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+
 
   // Add expense
   @override
@@ -35,18 +43,75 @@ class BudgetApi implements authApiDataSource {
     }
   }
 
-  // Get all expenses
-  @override
-  Stream<List<Expense>> getAllExpenses() {
-    User? currentUser = _auth.currentUser;
 
+
+// Get all expenses and total income
+  @override
+  Stream<Map<String, dynamic>> getAllExpensesAndIncome() {
+    User? currentUser = _auth.currentUser;
     if (currentUser == null) {
       throw Exception("Kullanıcı oturumu açık değil.");
     }
     try {
       String userId = currentUser.uid;
+      // Expenses
+      Stream<List<Expense>> expensesStream = _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('expenses')
+          .orderBy('createdAt', descending: true)
+          .limit(10)  // return last 10 expenses to the list
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+          .map((doc) => Expense.fromJson(doc.data() as Map<String, dynamic>))
+          .toList());
 
-      return _firestore.collection('users')
+      // Total Income
+      Stream<double> totalIncomeStream = _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('income')
+          .doc('incomeData')
+          .snapshots()
+          .map((docSnapshot) {
+        if (docSnapshot.exists) {
+          final data = docSnapshot.data() as Map<String, dynamic>?;
+          return data?['totalIncome'] ?? 0.0;
+        } else {
+          return 0.0;
+        }
+      });
+      return Rx.combineLatest2(
+        expensesStream,
+        totalIncomeStream,
+            (List<Expense> expenses, double totalIncome) {
+          return {
+            'expenses': expenses,
+            'totalIncome': totalIncome,
+          };
+        },
+      );
+    } on Exception catch (e) {
+      throw Exception("Error Occured: $e");
+    }
+  }
+
+
+
+
+
+
+  //get all expenses
+  @override
+  Stream<List<Expense>> getAllExpenses() {
+    User? currentUser = _auth.currentUser;
+    if (currentUser == null) {
+      throw Exception("Kullanıcı oturumu açık değil.");
+    }
+    try {
+      String userId = currentUser.uid;
+      Stream<List<Expense>> allExpenses = _firestore
+          .collection('users')
           .doc(userId)
           .collection('expenses')
           .orderBy('createdAt', descending: true)
@@ -54,10 +119,134 @@ class BudgetApi implements authApiDataSource {
           .map((snapshot) => snapshot.docs
           .map((doc) => Expense.fromJson(doc.data() as Map<String, dynamic>))
           .toList());
-
+      return allExpenses;
     } on Exception catch (e) {
       throw Exception("Error Occured: $e");
     }
   }
 
+
+
+
+
+
+//get all expenses by categoryList
+  @override
+  Stream<List<Expense>> getExpensesByCategory(List<String> categoryList) {
+    User? currentUser = _auth.currentUser;
+    if (currentUser == null) {
+      throw Exception("Kullanıcı oturumu açık değil.");
+    }
+    try {
+      String userId = currentUser.uid;
+      Stream<List<Expense>> allCategoryExpenses = _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('expenses')
+          .where('category', whereIn: categoryList)
+          .orderBy('createdAt', descending: true)
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+          .map((doc) => Expense.fromJson(doc.data() as Map<String, dynamic>))
+          .toList());
+      return  allCategoryExpenses;
+    } on Exception catch (e) {
+      throw Exception("Error Occured: $e");
+    }
+  }
+
+
+
+
+
+  // Add income and return the updated total income
+  @override
+  Future<double> addIncome(double income) async {
+    try {
+      User? currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        throw Exception("Kullanıcı oturumu açık değil.");
+      }
+      String userId = currentUser.uid;
+      DocumentReference incomeDocRef = _firestore.collection('users').doc(userId).collection('income').doc('incomeData');
+      DocumentSnapshot incomeSnapshot = await incomeDocRef.get();
+      double updatedIncome;
+
+      if (incomeSnapshot.exists) {
+        double currentIncome = incomeSnapshot.get('totalIncome') ?? 0;
+        updatedIncome = currentIncome + income;
+        await incomeDocRef.update({
+          'totalIncome': updatedIncome,
+        });
+      } else {
+        updatedIncome = income;
+        await incomeDocRef.set({
+          'totalIncome': updatedIncome,
+        });
+      }
+      return updatedIncome;
+    } catch (e) {
+      throw Exception("Error Occurred: $e");
+    }
+  }
+
+
+
+
+
+
+  // return categories and their total expense price for the charts.
+  @override
+  Stream<Map<String, double>> getPieChartList() {
+    try {
+      User? currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        throw Exception("Kullanıcı oturumu açık değil.");
+      }
+      String userId = currentUser.uid;
+
+
+      return _firestore.collection("users")
+          .doc(userId)
+          .collection("expenses")
+          .snapshots()
+          .map((snapshot) {
+
+        Map<String, double> categoryTotalMap = {};
+
+        for (var doc in snapshot.docs) {
+          Expense expense = Expense.fromJson(doc.data() as Map<String, dynamic>);
+          String category = expense.category;
+          double price = expense.price;
+
+
+          if (categoryTotalMap.containsKey(category)) {
+            categoryTotalMap[category] = categoryTotalMap[category]! + price;
+          } else {
+            categoryTotalMap[category] = price;
+          }
+        }
+
+        // Kategorileri ve toplamlarını döndür
+        return categoryTotalMap;
+      });
+    } on Exception catch (e) {
+      throw Exception("Error Occurred: $e");
+    }
+  }
+
+
+
+
+
+
+
+
 }
+
+
+
+
+
+
+

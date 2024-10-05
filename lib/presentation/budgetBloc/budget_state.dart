@@ -15,20 +15,20 @@ class AddExpenseSuccessState extends BudgetState{
 }
 
 
+class AddIncomeSuccessState extends BudgetState{
+  final double totalIncome;
+  AddIncomeSuccessState(this.totalIncome);
+}
 
 
 
-class GetAllExpenseSuccessState extends BudgetState{
+class GetAllExpenseIncomeSuccessState extends BudgetState{
   final List<Expense> allExpenses;
   final double totalExpense;
-  GetAllExpenseSuccessState(this.allExpenses,this.totalExpense);
+  final double totalIncome;
+  GetAllExpenseIncomeSuccessState(this.allExpenses,this.totalExpense,this.totalIncome);
 }
 
-
-class GetTotalSumExpenseSuccessState extends BudgetState{
-  final double totalSumExpense;
-  GetTotalSumExpenseSuccessState(this.totalSumExpense);
-}
 
 
 

@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   state.error,
                   type: AnimatedSnackBarType.error,
                   mobileSnackBarPosition: MobileSnackBarPosition.bottom,
-                  duration: const Duration(seconds: 4),  // SnackBar'ın ekranda kalma süresi
+                  duration: const Duration(seconds: 4),
                 ).show(context);
               });
             }
@@ -46,20 +46,17 @@ class _LoginScreenState extends State<LoginScreen> {
             if (state is AuthSuccessState) {
               // Handle success state
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (state.errorMessage != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
-                  }
                   AnimatedSnackBar.material(
                     'Logged in Successfully',
-                    type: AnimatedSnackBarType.success,  // Farklı türler: success, error, info, warning
-                    mobileSnackBarPosition: MobileSnackBarPosition.bottom,  // Alt kısımda gösterilir
-                    duration: const Duration(seconds: 4),  // SnackBar'ın ekranda kalma süresi
+                    type: AnimatedSnackBarType.success,
+                    mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+                    duration: const Duration(seconds: 4),
                   ).show(context);
 
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (context) => HomeScreen(
-                        username: state.username!,  // Username'i buraya geçiriyoruz
+                        username: state.username!,
                       ),
                     ),
                   );
@@ -67,12 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
               });
             }
 
-            if (state is AuthErrorState) {
-              // Show error message
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
-              });
-            }
+
 
             return SizedBox(
               width: size.width,

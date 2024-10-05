@@ -1,11 +1,14 @@
 import 'dart:math';
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:budget_family/data/model/expenseModel.dart';
 import 'package:budget_family/presentation/login.dart';
+import 'package:budget_family/presentation/statisticScreen.dart';
 import 'package:budget_family/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'add_expense.dart';
+import 'allexpensePage.dart';
 import 'budgetBloc/budget_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,18 +21,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController totalIncomeController = TextEditingController();
+
+
   @override
   void initState() {
     super.initState();
-    context.read<BudgetBloc>().add(GetAllExpenseRequest());
+    final currentState = context.read<BudgetBloc>().state;
+    if (currentState is! GetAllExpenseIncomeSuccessState) {
+      context.read<BudgetBloc>().add(GetAllExpenseAndIncomeRequest());
+    }
   }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery
-        .of(context)
-        .size;
+
     final ScrollController scrollController = ScrollController();
+    double totalIncome = 0.0;
+    double totalExpense = 0;
+    List<Expense> expenses = [];
+    double totalBalance=0.0;
 
     return Scaffold(
       bottomNavigationBar: ClipRRect(
@@ -55,23 +70,30 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const AddExpense()));
+              MaterialPageRoute(builder: (context) =>  ExpenseStatistics( totalBalance:totalBalance)));
         },
         shape: const CircleBorder(),
         elevation: 7,
         backgroundColor: Colors.yellow[700],
         child: const Icon(Icons.add, color: Colors.white),
       ),
+
+
+
+
+
       body: BlocListener<BudgetBloc, BudgetState>(
         listener: (context, state) {
-          if (state is AddExpenseSuccessState){
-
-            context.read<BudgetBloc>().add(GetAllExpenseRequest());
+          if (state is AddExpenseSuccessState || state is AddIncomeSuccessState) {
+            context.read<BudgetBloc>().add(GetAllExpenseAndIncomeRequest());
 
           }
         },
         child: BlocBuilder<BudgetBloc, BudgetState>(
           builder: (context, state) {
+
+
+
             if (state is BudgetLoadingState) {
               return const Center(
                 child: CircularProgressIndicator(
@@ -89,68 +111,97 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             }
 
-            if (state is GetAllExpenseSuccessState) {
-              // Harcama listesini al
-              final expenses = state.allExpenses;
-              double totalExpense=state.totalExpense;
 
-              return SafeArea(
-                child: SizedBox(
-                  width: size.width,
-                  height: size.height,
-                  child: Column(
-                    children: [
-                      _buildHeader(size),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Scrollbar(
-                          controller: scrollController,
-                          thumbVisibility: true,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                _buildBalanceCard(totalExpense),
-                                const SizedBox(width: 15),
-                                _buildBalanceCard2(),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const Padding(
-                        padding: EdgeInsets.only(right: 20.0),
-                        //text allign end
-                        child: Align(
-                          alignment: Alignment.centerRight,
-
-                          child: Text('Add Income ➤', style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.indigo)),
-                        ),
-                      ),
-
-                      const SizedBox(height: 5),
-
-                      _buildTransactionHistoryHeader(),
-                      Expanded(
-                        child: _buildTransactionList(expenses),
-                      ),
-
-                    ],
-                  ),
-                ),
-              );
+            if(state is AddIncomeSuccessState){
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                AnimatedSnackBar.material(
+                  "Income Updated Successfully",
+                  type: AnimatedSnackBarType.success,
+                  mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+                  duration: const Duration(seconds: 4),
+                ).show(context);
+              });
             }
 
-            return const Center(child: Text("No Data Available"));
+
+            if (state is GetAllExpenseIncomeSuccessState) {
+              expenses = state.allExpenses;
+              totalExpense = state.totalExpense;
+              totalIncome = state.totalIncome;
+              totalBalance = totalIncome-totalExpense;
+            }
+
+
+
+            return buildMainContent(totalIncome, totalExpense, expenses,totalBalance);
+
           },
         ),
       ),
     );
   }
+
+
+
+
+
+  Widget buildMainContent(double totalIncome, double totalExpense, List<Expense> expenses,double totalBalance) {
+    Size size = MediaQuery.of(context).size;
+
+    return SafeArea(
+      child: SizedBox(
+        width: size.width,
+        height: size.height,
+        child: Column(
+          children: [
+            _buildHeader(size),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Scrollbar(
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _buildBalanceCard(totalExpense,totalIncome,totalBalance),
+                      const SizedBox(width: 15),
+                      _buildBalanceCard2(totalIncome),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'Add Income ➤',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildTransactionHistoryHeader(),
+                _buildViewAllExpenseHeader(totalExpense,totalIncome,totalBalance),
+              ],
+            ),
+            Expanded(
+              child: _buildTransactionList(expenses),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 
   Widget _buildHeader(Size size) {
     return Padding(
@@ -187,13 +238,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.grey.shade700,
                   ),
                 ),
-                const SizedBox(height: 1),
+                const SizedBox(height: 2),
                 Text(
                   "${widget.username}",
                   style: TextStyle(
                     fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.indigo,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.orange,
                   ),
                 ),
               ],
@@ -237,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   // 1. FIRST CARD
-  Widget _buildBalanceCard(double totalExpense) {
+  Widget _buildBalanceCard(double totalExpense,double totalIncome,double totalBalance) {
     return Padding(
       padding: const EdgeInsets.only(top: 7.0, left: 10.0, bottom: 7.0,),
       child: SingleChildScrollView(
@@ -268,12 +319,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.w600,
                             color: Colors.white)),
                     const SizedBox(height: 5),
-                    Text('48000.00 ₺',
+                    Text('$totalBalance ₺',
                         style: TextStyle(fontSize: 35,
                             fontWeight: FontWeight.w500,
                             color: Colors.white)),
                     const SizedBox(height: 10),
-                    _buildIncomeExpenseRow(totalExpense),
+                    _buildIncomeExpenseRow(totalExpense,totalIncome),
                   ],
                 ),
                 const Positioned(right: 15, top: 10,
@@ -292,9 +343,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
+
+
   //2. SECOND CARD
   //add expense and info card
-  Widget _buildBalanceCard2() {
+  Widget _buildBalanceCard2(double totalIncome) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: SingleChildScrollView(
@@ -313,8 +366,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.black45, blurRadius: 5, offset: Offset(5, 5)),
             ],
           ),
-          child: const Padding(
-            padding: EdgeInsets.all(10.0),
+          child:  Padding(
+            padding: EdgeInsets.only(left:20.0,top: 5),
             child: Stack(
               children: [
                 Column(
@@ -324,20 +377,112 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(fontSize: 25,
                             fontWeight: FontWeight.w600,
                             color: Colors.white)),
-                    SizedBox(height: 5),
-                    Text('48000.00 ₺',
-                        style: TextStyle(fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white)),
+
+                    const SizedBox(width: 15),
+
+                    // text  total ıncome
+                    Text('Total Income', style: TextStyle(fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white)),
+                    Text("$totalIncome ₺", style: TextStyle(fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white)),
+
+
+
+                    //button add income
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orangeAccent,
+                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        elevation: 8,
+                        shadowColor: Colors.black.withOpacity(0.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(30)),
+                              ),
+                              title: const Text(
+                                'Add Income',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.orangeAccent,
+                                ),
+                              ),
+                              content: TextField(
+                                controller: totalIncomeController,
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                  hintText: 'Add Income',
+                                  hintStyle: TextStyle(fontWeight: FontWeight.w300,color: Colors.grey),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.orangeAccent),
+                                  ),
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    totalIncome = double.parse(totalIncomeController.text);
+                                    context.read<BudgetBloc>().add(AddIncomeRequest(income: totalIncome));
+                                    totalIncomeController.clear();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    'Add',
+                                    style: TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: const Text(
+                        'Add Income',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+
+
+
                     SizedBox(height: 10),
 
                   ],
                 ),
-                Positioned(right: 15, top: 10,
+                Positioned(right: 10, top:5 ,
                   child: Text(
                     "💳", style: TextStyle(fontSize: 30),
                   ),
                 ),
+
+            Positioned(
+              right: 2,
+              bottom: 5,
+              child: Image.asset(
+                'assets/bird.png', // replace with your coin image path
+                height: 100,
+                width: 135,
+                fit: BoxFit.cover,
+              ),
+            ),
+
+
               ],
             ),
           ),
@@ -347,17 +492,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  Widget _buildIncomeExpenseRow(double totalExpense) {
+  Widget _buildIncomeExpenseRow(double totalExpense,double totalIncome) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildIncomeWidget(),
+        _buildIncomeWidget(totalIncome),
         _buildExpenseWidget(totalExpense),
       ],
     );
   }
 
-  Widget _buildIncomeWidget() {
+  Widget _buildIncomeWidget(double totalIncome) {
     return Row(
       children: [
         Container(
@@ -371,13 +516,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         const SizedBox(width: 10),
-        const Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Total Income', style: TextStyle(fontSize: 15,
                 fontWeight: FontWeight.w400,
                 color: Colors.white)),
-            Text('20000.00 ₺', style: TextStyle(fontSize: 17,
+            Text("$totalIncome ₺", style: TextStyle(fontSize: 17,
                 fontWeight: FontWeight.w500,
                 color: Colors.white)),
           ],
@@ -432,6 +577,48 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildViewAllExpenseHeader(double totalExpense, double totalIncome, double totalBalance) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: TextButton(
+          style: TextButton.styleFrom(
+            textStyle: TextStyle(
+              fontWeight: FontWeight.w400,
+              color: Colors.grey[600],
+            ),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AllExpenseScreen(
+                    totalExpense: totalExpense,
+                    totalIncome: totalIncome,
+                    totalBalance: totalBalance,),
+                ),
+
+            );
+          },
+          child: Text(
+            "View All",
+            style: TextStyle(
+              color: Colors.orangeAccent,
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
+
+
+
   Widget _buildTransactionList(List<Expense> expenses) {
     return ListView.builder(
       itemCount: expenses.length, // Use the actual data count
@@ -484,7 +671,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Text('-${expense.price} ₺', style: const TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w400,
                       color: Colors.indigo)),
                 ],
               ),

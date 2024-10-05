@@ -23,6 +23,8 @@ class _AddExpenseState extends State<AddExpense> {
   int? selectedCategoryIndex;
 
 
+
+
   @override
   void initState() {
     super.initState();
@@ -214,7 +216,7 @@ class _AddExpenseState extends State<AddExpense> {
                     width: MediaQuery
                         .of(context)
                         .size
-                        .width * 0.44,
+                        .width * 0.70,
                     child: TextFormField(
                       controller: dateController,
                       textAlignVertical: TextAlignVertical.center,
@@ -303,7 +305,8 @@ class _AddExpenseState extends State<AddExpense> {
 
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
+                        backgroundColor: Colors.white,
+                        elevation: 5,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
@@ -315,7 +318,7 @@ class _AddExpenseState extends State<AddExpense> {
                         ),
                       ),
                       child: const Text('Add Expense',
-                        style: TextStyle(color: Color(0xffffffFF,),
+                        style: TextStyle(color: Colors.black,
                             fontSize: 17),),
                     ),
                   ),

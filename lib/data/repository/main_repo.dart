@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:budget_family/data/model/expenseModel.dart';
+import 'package:budget_family/data/model/pieChartModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
@@ -11,7 +12,11 @@ import '../api/data_source.dart';
 // Repo function implementation class
 abstract class IMainRepository{
   Future <Either<String,String>> addExpense(double expense, String category, String date);
-  Stream<Either<String, Tuple2<List<Expense>, double>>>  getAllExpense();
+  Stream<Either<String, Tuple3<List<Expense>, double, double>>> getAllExpensesAndIncome();
+  Future <Either<String,double>> addIncome(double expense);
+  Stream<Either<String,List<Expense>>> getAllExpenses();
+  Stream<Either<String,List<Expense>>> getExpensesByCategory(List<String> categoryList);
+  Stream<Either<String, Map<String, double>>> getPieChartList();
 }
 
 
@@ -35,24 +40,106 @@ class MainRepository extends IMainRepository{
   }
 
 
-
-
-
-
-  @override
-  Stream<Either<String, Tuple2<List<Expense>, double>>> getAllExpense() async* {
+  //get last 10expense total income total expense
+  @override Stream<Either<String, Tuple3<List<Expense>, double, double>>> getAllExpensesAndIncome() async* {
     try {
-      yield* budgetApi.getAllExpenses().map((expenseList) {
-        double totalExpense = expenseList.fold(
+      yield* budgetApi.getAllExpensesAndIncome().map((data) {
+        List<Expense> expenseList = data['expenses'] as List<Expense>;  //expense list
+
+        double totalExpense = expenseList.fold(   //total expense
           0.0,
               (sum, item) => sum + item.price,
         );
-        return right(Tuple2(expenseList, totalExpense));
+        double totalIncome = data['totalIncome'] as double;  //total Income
+        return right(Tuple3(expenseList, totalExpense, totalIncome));
       });
     } on FirebaseException catch (e) {
       yield left(e.message ?? 'Firebase hatası oluştu.');
     } catch (e) {
       yield left('Harcama bilgilerini alırken hata oluştu.');
+    }
+  }
+
+
+
+
+
+
+
+
+  //get all expense
+  @override
+  Stream<Either<String,List<Expense>>> getAllExpenses()async* {
+    try {
+      yield* budgetApi.getAllExpenses().map((expenseList) {
+        return right(expenseList);
+      });
+    } on FirebaseException catch (e) {
+      yield left(e.message ?? 'Firebase hatası oluştu.');
+    } catch (e) {
+      yield left('Harcama bilgilerini alırken hata oluştu.');
+    }
+  }
+
+
+
+
+
+  // get expense list by category filter
+  @override
+  Stream<Either<String,List<Expense>>> getExpensesByCategory(List<String> categoryList) async* {
+    try {
+      yield* budgetApi.getExpensesByCategory(categoryList).map((expenseList) {
+        return right(expenseList);
+      });
+    } on FirebaseException catch (e) {
+      yield left(e.message ?? 'Firebase hatası oluştu.');
+    } catch (e) {
+      yield left('Harcama bilgilerini alırken hata oluştu.');
+    }
+  }
+
+
+
+
+
+
+
+
+
+  //add and return income
+  @override
+  Future<Either<String, double>> addIncome(double income) async{
+   try{
+     final totalIncome = await budgetApi.addIncome(income);
+     return right(totalIncome);
+   }on FirebaseException catch (e) {
+     return left(e.message ?? 'Firebase hatası oluştu.');
+   } catch (e) {
+     return left('Cüzdan bilgilerini alırken hata oluştu.');
+   }
+  }
+
+
+
+
+
+  // categories and their total expenses for PieChart
+
+  @override
+  Stream<Either<String, Map<String, double>>> getPieChartList() async* {
+    try {
+      yield* budgetApi.getPieChartList().map((categoryTotalMap) {
+        if(categoryTotalMap.isEmpty){
+          return left("MAP is emptyy");
+        }
+        return right(categoryTotalMap);
+      });
+    } on FirebaseException catch (e) {
+      yield left(e.message ?? 'Firebase hatası oluştu.');
+    } catch (e) {
+      yield left('Harcama bilgilerini alırken hata oluştu.');
+      
     }
   }
 

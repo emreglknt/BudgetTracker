@@ -34,27 +34,48 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
 
 
 
+
+
+    //add income
+    on<AddIncomeRequest>((event,emit) async{
+      emit(BudgetLoadingState());
+      var totalIncome = await _mainRepo.addIncome(event.income);
+      totalIncome.fold(
+        (fail) => emit (BudgetErrorState(fail)),
+          (totalIncome) => emit(AddIncomeSuccessState(totalIncome)),
+      );
+    });
+
+
+
+
     on<ResetBudgetStateEvent>((event, emit) {
       emit(BudgetInitial());
     });
 
 
-    on<GetAllExpenseRequest>((event, emit) async {
+    on<GetAllExpenseAndIncomeRequest>((event, emit) async {
       emit(BudgetLoadingState());
-
       await emit.forEach(
-        _mainRepo.getAllExpense(),
-        onData: (Either<String, Tuple2<List<Expense>, double>> result) => result.fold(
+        _mainRepo.getAllExpensesAndIncome(),
+        onData: (Either<String, Tuple3<List<Expense>, double,double>> result) => result.fold(
               (error) => BudgetErrorState(error),
               (expensesData) {
             List<Expense> expenses = expensesData.value1; // Harcama listesi
-            double totalExpense = expensesData.value2;    // Toplam harcama
-            return GetAllExpenseSuccessState(expenses, totalExpense);
+            double totalExpense = expensesData.value2;
+            double totalIncome = expensesData.value3;// Toplam harcama
+            return GetAllExpenseIncomeSuccessState(expenses, totalExpense,totalIncome);
           },
         ),
         onError: (_, __) => BudgetErrorState('Bir hata oluştu.'), // Olası hataları ele al
       );
     });
+
+
+
+
+
+
 
 
 

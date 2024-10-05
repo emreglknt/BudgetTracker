@@ -51,6 +51,31 @@ final List<Map<String, dynamic>> categories = [
 
 
 
+
+List<Color> colorList = [
+  Colors.purple, Colors.blue,
+  Colors.green, Colors.deepOrange,
+  Colors.redAccent, Colors.teal,
+  Colors.amber,
+   Colors.indigo,
+  Colors.brown,
+  Colors.grey,
+  Colors.greenAccent, Colors.orangeAccent,
+  Colors.purpleAccent, Colors.pinkAccent,
+  Colors.tealAccent, Colors.cyanAccent,
+  Colors.amberAccent,
+  Colors.limeAccent,Colors.indigoAccent,
+  Colors.deepOrangeAccent, Colors.lightBlueAccent,
+  Colors.lightGreenAccent, Colors.deepPurpleAccent,
+
+];
+
+
+
+
+
+
+
 Map<String, dynamic> getCategoryIconAndColor(String category) {
   return categories.firstWhere(
         (element) => element['name'] == category,
