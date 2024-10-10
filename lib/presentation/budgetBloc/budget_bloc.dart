@@ -22,16 +22,6 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
   BudgetBloc() : super(BudgetInitial()) {
 
 
-    //add expense
-    on<AddExpenseRequest>((event, emit) async {
-      emit(BudgetLoadingState());
-      var expense = await _mainRepo.addExpense(event.expense as double,event.category,event.date);
-      expense.fold(
-              (fail) => emit(BudgetErrorState(fail)),
-            (success){emit(AddExpenseSuccessState());},
-      );
-    });
-
 
 
 
@@ -49,10 +39,6 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
 
 
 
-    on<ResetBudgetStateEvent>((event, emit) {
-      emit(BudgetInitial());
-    });
-
 
     on<GetAllExpenseAndIncomeRequest>((event, emit) async {
       emit(BudgetLoadingState());
@@ -67,7 +53,7 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
             return GetAllExpenseIncomeSuccessState(expenses, totalExpense,totalIncome);
           },
         ),
-        onError: (_, __) => BudgetErrorState('Bir hata oluştu.'), // Olası hataları ele al
+        onError: (_, __) => BudgetErrorState('Bir hata oluştu.'),
       );
     });
 

@@ -9,7 +9,7 @@ import 'allexpenseBloc/all_expense_bloc.dart';
 class AllExpenseScreen extends StatefulWidget {
   final double totalExpense;
   final double totalIncome;
-  final double totalBalance;
+  final String totalBalance;
 
   const AllExpenseScreen({
     Key? key,

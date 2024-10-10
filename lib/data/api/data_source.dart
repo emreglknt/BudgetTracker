@@ -1,27 +1,31 @@
+import 'package:budget_family/utils/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
+import '../model/ExchangeRateModel.dart';
 import '../model/expenseModel.dart';
 import '../model/pieChartModel.dart';
 
 abstract class authApiDataSource {
-  Future<void> addExpense(double expense, String category, String date);
+  Future<void> addExpense(double expense, String category, DateTime date);
   Stream<List<Expense>> getAllExpenses();
   Stream<Map<String, dynamic>> getAllExpensesAndIncome();
   Future<double> addIncome(double income);
   Stream<List<Expense>> getExpensesByCategory(List<String> categoryList);
   Stream<Map<String, double>> getPieChartList();
+  Future<double> getCurrency(String target);
 }
 
 class BudgetApi implements authApiDataSource {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  final Dio dio = Dio();
 
 
   // Add expense
   @override
-  Future<void> addExpense(double expense, String category, String date) async {
+  Future<void> addExpense(double expense, String category, DateTime date) async {
     try {
       User? currentUser = _auth.currentUser;
       if (currentUser == null) {
@@ -114,7 +118,7 @@ class BudgetApi implements authApiDataSource {
           .collection('users')
           .doc(userId)
           .collection('expenses')
-          .orderBy('createdAt', descending: true)
+          .orderBy('date', descending: true)
           .snapshots()
           .map((snapshot) => snapshot.docs
           .map((doc) => Expense.fromJson(doc.data() as Map<String, dynamic>))
@@ -144,7 +148,7 @@ class BudgetApi implements authApiDataSource {
           .doc(userId)
           .collection('expenses')
           .where('category', whereIn: categoryList)
-          .orderBy('createdAt', descending: true)
+          .orderBy('date', descending: true)
           .snapshots()
           .map((snapshot) => snapshot.docs
           .map((doc) => Expense.fromJson(doc.data() as Map<String, dynamic>))
@@ -193,6 +197,37 @@ class BudgetApi implements authApiDataSource {
 
 
 
+  //get currency
+  @override
+  Future<double> getCurrency(String base) async {
+    try {
+      print("Fetching currency exchange rate for target: $base");
+
+      Response currencyResponse =await dio.get("https://hexarate.paikama.co/api/rates/latest/$base", queryParameters: {
+        'target': "TRY",
+      });
+
+
+      ExchangeRateResponse exchangeRateResponse = ExchangeRateResponse.fromJson(currencyResponse.data);
+
+
+
+      return exchangeRateResponse.data.mid;
+    } catch (e) {
+      print("Error fetching currency: $e");
+      throw Exception("Currency conversion failed");
+    }
+  }
+
+
+
+
+
+
+
+
+
+
 
 
   // return categories and their total expense price for the charts.
@@ -234,6 +269,13 @@ class BudgetApi implements authApiDataSource {
       throw Exception("Error Occurred: $e");
     }
   }
+
+
+
+
+
+
+
 
 
 

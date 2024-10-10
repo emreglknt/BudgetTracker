@@ -1,7 +1,10 @@
-class Expense{
+// Expense sınıfını oluştururken createdAt'ı kullan
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class Expense {
   final double price;
   final String category;
-  final String date;
+  final DateTime date; // createdAt'ı DateTime olarak kullan
 
   Expense({
     required this.price,
@@ -11,11 +14,9 @@ class Expense{
 
   factory Expense.fromJson(Map<String, dynamic> json) {
     return Expense(
-      price: json['price'].toDouble(),
+      price: json['price'],
       category: json['category'],
-      date: json['date'],
+      date: (json['createdAt'] as Timestamp).toDate(), // Firestore'dan alırken DateTime'a çevir
     );
   }
-
-
 }

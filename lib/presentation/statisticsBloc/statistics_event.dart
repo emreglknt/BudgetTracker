@@ -9,3 +9,6 @@ class GetPieChart extends StatisticsEvent{
 }
 
 
+class GetMonthlyChart extends StatisticsEvent{
+  GetMonthlyChart();
+}

@@ -10,10 +10,6 @@ class BudgetLoadingState extends BudgetState{}
 
 
 
-class AddExpenseSuccessState extends BudgetState{
-  AddExpenseSuccessState();
-}
-
 
 class AddIncomeSuccessState extends BudgetState{
   final double totalIncome;
@@ -32,11 +28,13 @@ class GetAllExpenseIncomeSuccessState extends BudgetState{
 
 
 
-
 class BudgetErrorState extends BudgetState {
   final String error;
   BudgetErrorState(this.error);
 }
+
+
+
 
 
 

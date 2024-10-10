@@ -42,9 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final ScrollController scrollController = ScrollController();
     double totalIncome = 0.0;
-    double totalExpense = 0;
+    double totalExpense = 0.0;
     List<Expense> expenses = [];
     double totalBalance=0.0;
+    String formattedBalance="";
 
     return Scaffold(
       bottomNavigationBar: ClipRRect(
@@ -70,7 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) =>  ExpenseStatistics( totalBalance:totalBalance)));
+            //MaterialPageRoute(builder: (context) =>  ExpenseStatistics( totalBalance:totalBalance)));
+            MaterialPageRoute(builder: (context) =>  AddExpense()));
+
         },
         shape: const CircleBorder(),
         elevation: 7,
@@ -84,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       body: BlocListener<BudgetBloc, BudgetState>(
         listener: (context, state) {
-          if (state is AddExpenseSuccessState || state is AddIncomeSuccessState) {
+          if ( state is AddIncomeSuccessState) {
             context.read<BudgetBloc>().add(GetAllExpenseAndIncomeRequest());
 
           }
@@ -129,11 +132,12 @@ class _HomeScreenState extends State<HomeScreen> {
               totalExpense = state.totalExpense;
               totalIncome = state.totalIncome;
               totalBalance = totalIncome-totalExpense;
+              formattedBalance = totalBalance.toStringAsFixed(2);
             }
 
 
 
-            return buildMainContent(totalIncome, totalExpense, expenses,totalBalance);
+            return buildMainContent(totalIncome, totalExpense, expenses,formattedBalance);
 
           },
         ),
@@ -145,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
 
-  Widget buildMainContent(double totalIncome, double totalExpense, List<Expense> expenses,double totalBalance) {
+  Widget buildMainContent(double totalIncome, double totalExpense, List<Expense> expenses,String formattedBalance) {
     Size size = MediaQuery.of(context).size;
 
     return SafeArea(
@@ -163,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _buildBalanceCard(totalExpense,totalIncome,totalBalance),
+                      _buildBalanceCard(totalExpense,totalIncome,formattedBalance),
                       const SizedBox(width: 15),
                       _buildBalanceCard2(totalIncome),
                     ],
@@ -190,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildTransactionHistoryHeader(),
-                _buildViewAllExpenseHeader(totalExpense,totalIncome,totalBalance),
+                _buildViewAllExpenseHeader(totalExpense,totalIncome,formattedBalance),
               ],
             ),
             Expanded(
@@ -288,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   // 1. FIRST CARD
-  Widget _buildBalanceCard(double totalExpense,double totalIncome,double totalBalance) {
+  Widget _buildBalanceCard(double totalExpense,double totalIncome,String formattedBalance) {
     return Padding(
       padding: const EdgeInsets.only(top: 7.0, left: 10.0, bottom: 7.0,),
       child: SingleChildScrollView(
@@ -319,7 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.w600,
                             color: Colors.white)),
                     const SizedBox(height: 5),
-                    Text('$totalBalance ₺',
+                    Text('$formattedBalance ₺',
                         style: TextStyle(fontSize: 35,
                             fontWeight: FontWeight.w500,
                             color: Colors.white)),
@@ -577,7 +581,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildViewAllExpenseHeader(double totalExpense, double totalIncome, double totalBalance) {
+  Widget _buildViewAllExpenseHeader(double totalExpense, double totalIncome, String formattedBalance) {
     return Padding(
       padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
       child: Align(
@@ -596,7 +600,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context) => AllExpenseScreen(
                     totalExpense: totalExpense,
                     totalIncome: totalIncome,
-                    totalBalance: totalBalance,),
+                    totalBalance: formattedBalance,),
                 ),
 
             );

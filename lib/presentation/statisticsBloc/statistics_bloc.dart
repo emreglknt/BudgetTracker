@@ -29,6 +29,26 @@ class StatisticsBloc extends Bloc<StatisticsEvent, StatisticsState> {
 
 
 
+    on<GetMonthlyChart>((event, emit) async {
+      emit(ChartLoadingState());
+
+   
+      await emit.forEach(
+        _mainRepo.getMonthlyExpenseData(),
+        onData: (Either<String, Map<String, double>> result) => result.fold(
+              (error) => ErrorState(error),
+              (chartMonthlyData) => MonthlyChartSuccessState(chartMonthlyData),
+        ),
+        onError: (_, __) => ErrorState('Bir hata oluştu.'),
+      );
+    });
+
+
+
+
+
+
+
 
   }
 

@@ -3,6 +3,7 @@ import 'package:budget_family/presentation/add_expense.dart';
 import 'package:budget_family/presentation/allexpenseBloc/all_expense_bloc.dart';
 import 'package:budget_family/presentation/authBloc/auth_bloc.dart';
 import 'package:budget_family/presentation/budgetBloc/budget_bloc.dart';
+import 'package:budget_family/presentation/currencyBloc/currency_bloc.dart';
 import 'package:budget_family/presentation/home.dart';
 import 'package:budget_family/presentation/login.dart';
 import 'package:budget_family/presentation/statisticScreen.dart';
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => StatisticsBloc(),
+        ),
+        BlocProvider(
+          create: (context) => CurrencyBloc(),
         ),
 
       ],

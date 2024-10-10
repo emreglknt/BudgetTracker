@@ -33,6 +33,7 @@ dependencies:
   pie_chart: ^5.4.0
   fl_chart: ^0.69.0
   syncfusion_flutter_gauges: ^27.1.51
+  syncfusion_flutter_charts: ^27.1.51
 
 
 dev_dependencies:

@@ -5,18 +5,21 @@ import 'package:budget_family/data/model/pieChartModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import '../api/data_source.dart';
 
 
 
 // Repo function implementation class
 abstract class IMainRepository{
-  Future <Either<String,String>> addExpense(double expense, String category, String date);
+  Future <Either<String,String>> addExpense(double expense, String category, DateTime date);
   Stream<Either<String, Tuple3<List<Expense>, double, double>>> getAllExpensesAndIncome();
   Future <Either<String,double>> addIncome(double expense);
   Stream<Either<String,List<Expense>>> getAllExpenses();
   Stream<Either<String,List<Expense>>> getExpensesByCategory(List<String> categoryList);
   Stream<Either<String, Map<String, double>>> getPieChartList();
+  Stream<Either<String,Map<String, double>>>getMonthlyExpenseData();
+  Future <Either<String,double>> getCurrency(String target);
 }
 
 
@@ -30,7 +33,7 @@ class MainRepository extends IMainRepository{
 
   //add expense
   @override
-  Future<Either<String, String>> addExpense(double expense, String category, String date) async {
+  Future<Either<String, String>> addExpense(double expense, String category, DateTime date) async {
     try {
       final result = await budgetApi.addExpense(expense, category, date);
       return right("success");
@@ -50,7 +53,7 @@ class MainRepository extends IMainRepository{
           0.0,
               (sum, item) => sum + item.price,
         );
-        double totalIncome = data['totalIncome'] as double;  //total Income
+        double totalIncome = data['totalIncome'] as double;
         return right(Tuple3(expenseList, totalExpense, totalIncome));
       });
     } on FirebaseException catch (e) {
@@ -142,6 +145,60 @@ class MainRepository extends IMainRepository{
       
     }
   }
+
+
+
+
+
+// get monthly expense
+  @override
+  Stream<Either<String, Map<String, double>>> getMonthlyExpenseData() async* {
+    try {
+      final allExpensesStream = budgetApi.getAllExpenses(); // Call the function to get all expenses
+      await for (final expenseList in allExpensesStream) {
+        Map<String, double> monthlyExpenses = {};
+
+        for (var expense in expenseList) {
+
+          DateTime expenseDate = expense.date;
+          String month = "${expenseDate.year}-${expenseDate.month.toString().padLeft(2, '0')}";
+
+          if (monthlyExpenses.containsKey(month)) {
+            monthlyExpenses[month] = monthlyExpenses[month]! + expense.price;
+          } else {
+            monthlyExpenses[month] = expense.price;
+          }
+        }
+
+        yield Right(monthlyExpenses);
+      }
+    } catch (e) {
+      yield Left("An error occurred: $e");
+    }
+  }
+
+
+
+
+
+
+
+
+  @override
+  Future <Either<String,double>> getCurrency(String target) async{
+    try{
+      final currency = await budgetApi.getCurrency(target);
+      print("currency main repo :$currency");
+      return right(currency);
+    }on FirebaseException catch (e) {
+      return left(e.message!);
+    } catch (e) {
+      return left('Currency Error');
+    }
+  }
+
+
+
 
 
 

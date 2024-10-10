@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class DioProvider{
   static Dio provideDio(){
-    Dio dio = Dio(BaseOptions(baseUrl:"http://10.0.2.2:5000/api/"));
+    Dio dio = Dio(BaseOptions(baseUrl:"https://hexarate.paikama.co/api/rates/latest/"));
     return dio;
   }
 }
