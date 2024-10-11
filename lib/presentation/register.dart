@@ -17,9 +17,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController rePasswordController = TextEditingController();
 
-
-
-
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -45,7 +42,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             }
 
             if (state is RegisterSuccessState) {
-
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 AnimatedSnackBar.material(
                   'User signed-up Successfully',
@@ -53,8 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                   duration: const Duration(seconds: 4),
                 ).show(context);
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
-
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
               });
             }
 
@@ -65,10 +60,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Image(
-                      image: AssetImage('assets/budget.jpg'),
-                      height: 200,
-                      fit: BoxFit.cover,
+                    SizedBox(
+                      height: size.height * 0.33, // Ekranın %30'u kadar yükseklik
+                      child: const Image(
+                        image: AssetImage('assets/budget.jpg'),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     const Padding(
@@ -80,17 +77,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: 20),
-
+                    // Username TextField
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: TextFormField(
                         controller: usernameController,
                         decoration: const InputDecoration(
                           hintText: 'Username',
-                          hintStyle: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),
+                          hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                           prefixIcon: Icon(Icons.account_circle_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -99,7 +97,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-
                     // Email TextField
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -107,7 +104,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: emailController,
                         decoration: const InputDecoration(
                           hintText: 'Email',
-                          hintStyle: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),
+                          hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                           prefixIcon: Icon(Icons.email),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -124,7 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         obscureText: true,
                         decoration: const InputDecoration(
                           hintText: 'Password',
-                          hintStyle: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),
+                          hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                           prefixIcon: Icon(Icons.lock),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -132,7 +129,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
+                    // Re-type Password TextField
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: TextFormField(
@@ -140,7 +138,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         obscureText: true,
                         decoration: const InputDecoration(
                           hintText: 'Re-type Password',
-                          hintStyle: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),
+                          hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                           prefixIcon: Icon(Icons.lock_reset_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -148,14 +146,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                     ),
-
-
-
-                    const SizedBox(height: 10),
-
-
-
-
                     const SizedBox(height: 20),
                     // Sign Up Button
                     Padding(
@@ -168,9 +158,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               rePasswordController.text.isEmpty) {
                             AnimatedSnackBar.material(
                               'Please fill all fields',
-                              type: AnimatedSnackBarType.info,  // Farklı türler: success, error, info, warning
-                              mobileSnackBarPosition: MobileSnackBarPosition.bottom,  // Alt kısımda gösterilir
-                              duration: const Duration(seconds: 4),  // SnackBar'ın ekranda kalma süresi
+                              type: AnimatedSnackBarType.info,
+                              mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+                              duration: const Duration(seconds: 4),
                             ).show(context);
                             return;
                           }
@@ -178,18 +168,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           if (passwordController.text != rePasswordController.text) {
                             AnimatedSnackBar.material(
                               'Passwords not match',
-                              type: AnimatedSnackBarType.warning,  // Farklı türler: success, error, info, warning
-                              mobileSnackBarPosition: MobileSnackBarPosition.bottom,  // Alt kısımda gösterilir
-                              duration: const Duration(seconds: 4),  // SnackBar'ın ekranda kalma süresi
+                              type: AnimatedSnackBarType.warning,
+                              mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+                              duration: const Duration(seconds: 4),
                             ).show(context);
                             return;
                           }
-                          // Dispatch the register event
+
                           context.read<AuthBloc>().add(AuthRegisterRequest(
-                            usernameController.text,
-                            emailController.text,
-                            passwordController.text
-                          ));
+                              usernameController.text, emailController.text, passwordController.text));
                         },
                         style: ElevatedButton.styleFrom(
                           elevation: 3,

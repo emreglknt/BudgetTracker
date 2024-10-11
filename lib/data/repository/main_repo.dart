@@ -181,9 +181,6 @@ class MainRepository extends IMainRepository{
 
 
 
-
-
-
   @override
   Future <Either<String,double>> getCurrency(String target) async{
     try{
