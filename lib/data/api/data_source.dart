@@ -15,6 +15,7 @@ abstract class authApiDataSource {
   Stream<List<Expense>> getExpensesByCategory(List<String> categoryList);
   Stream<Map<String, double>> getPieChartList();
   Future<double> getCurrency(String target);
+  Stream<Map<String, double>> getMonthlyExpenses();
 }
 
 class BudgetApi implements authApiDataSource {
@@ -104,7 +105,6 @@ class BudgetApi implements authApiDataSource {
 
 
 
-
   //get all expenses
   @override
   Stream<List<Expense>> getAllExpenses() {
@@ -128,8 +128,6 @@ class BudgetApi implements authApiDataSource {
       throw Exception("Error Occured: $e");
     }
   }
-
-
 
 
 
@@ -224,13 +222,7 @@ class BudgetApi implements authApiDataSource {
 
 
 
-
-
-
-
-
-
-  // return categories and their total expense price for the charts.
+  // Kategorileri ve toplamlarını döndür
   @override
   Stream<Map<String, double>> getPieChartList() {
     try {
@@ -262,13 +254,59 @@ class BudgetApi implements authApiDataSource {
           }
         }
 
-        // Kategorileri ve toplamlarını döndür
+
         return categoryTotalMap;
       });
     } on Exception catch (e) {
       throw Exception("Error Occurred: $e");
     }
   }
+
+
+
+
+
+//Get Monthly Expenses
+  @override
+  Stream<Map<String, double>> getMonthlyExpenses() {
+    try {
+      User? currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        throw Exception("Kullanıcı oturumu açık değil.");
+      }
+      String userId = currentUser.uid;
+
+      return _firestore
+          .collection("users")
+          .doc(userId)
+          .collection("expenses")
+          .orderBy('date', descending: false)
+          .snapshots()
+          .map((snapshot) {
+        Map<String, double> monthlyExpensesMap = {};
+
+        for (var doc in snapshot.docs) {
+          Expense expense = Expense.fromJson(doc.data() as Map<String, dynamic>);
+          DateTime expenseDate = expense.date;
+
+          String monthKey = "${expenseDate.year}-${expenseDate.month.toString().padLeft(2, '0')}";
+
+          double price = expense.price;
+
+          if (monthlyExpensesMap.containsKey(monthKey)) {
+            monthlyExpensesMap[monthKey] = monthlyExpensesMap[monthKey]! + price;
+          } else {
+            monthlyExpensesMap[monthKey] = price;
+          }
+        }
+
+        return monthlyExpensesMap;
+      });
+    } on Exception catch (e) {
+      throw Exception("Error Occurred: $e");
+    }
+  }
+
 
 
 

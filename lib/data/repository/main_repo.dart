@@ -154,26 +154,15 @@ class MainRepository extends IMainRepository{
   @override
   Stream<Either<String, Map<String, double>>> getMonthlyExpenseData() async* {
     try {
-      final allExpensesStream = budgetApi.getAllExpenses(); // Call the function to get all expenses
-      await for (final expenseList in allExpensesStream) {
-        Map<String, double> monthlyExpenses = {};
+      yield* budgetApi.getMonthlyExpenses().map((monthlyMap){
+        return right(monthlyMap);
+      });
 
-        for (var expense in expenseList) {
-
-          DateTime expenseDate = expense.date;
-          String month = "${expenseDate.year}-${expenseDate.month.toString().padLeft(2, '0')}";
-
-          if (monthlyExpenses.containsKey(month)) {
-            monthlyExpenses[month] = monthlyExpenses[month]! + expense.price;
-          } else {
-            monthlyExpenses[month] = expense.price;
-          }
-        }
-
-        yield Right(monthlyExpenses);
-      }
+    } on FirebaseException catch (e) {
+    yield left(e.message ?? 'Firebase hatası oluştu.');
     } catch (e) {
-      yield Left("An error occurred: $e");
+    yield left('Harcama bilgilerini alırken hata oluştu.');
+
     }
   }
 

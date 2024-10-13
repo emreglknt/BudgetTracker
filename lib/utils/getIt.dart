@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 var locator = GetIt.instance;
 
 Future<void> getInit()async{
-
+  await _initComponents();
 }
 
 Future<void> _initComponents()async{

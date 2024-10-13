@@ -30,6 +30,23 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.indigo),
+        ),
+        title: Text(
+          "Expense Statistics 📊",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
+            color: Colors.indigo,
+          ),
+        ),
+      ),
       body: BlocBuilder<StatisticsBloc, StatisticsState>(
         builder: (context, state) {
           if (state is ChartLoadingState) {
@@ -54,6 +71,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
 
           if (state is MonthlyChartSuccessState) {
             monthlyExpenses = state.monthlyData;
+            print(monthlyExpenses);
           }
 
           if (state is PieChartSuccessState) {
@@ -63,21 +81,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
           return SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: screenHeight * 0.05),
-                const Padding(
-                  padding: EdgeInsets.only(left: 10.0, top: 5),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Expense Statistics 📊",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.indigo,
-                      ),
-                    ),
-                  ),
-                ),
+
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -85,45 +89,46 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
                     children: [
                       _buildButton(
                         "Category",
-                        Colors.blue,
+                        Icons.category, // Icon for the Category button
+                        Colors.blue, // Gradient start color
+                        Colors.lightBlueAccent, // Gradient end color
                             () {
                           setState(() {
                             currentCard = "category";
                           });
                           context.read<StatisticsBloc>().add(GetPieChart());
                         },
-                        screenWidth * 0.25,
+                        screenWidth * 0.25, // Button width
                       ),
+
                       _buildButton(
-                        "Month",
-                        Colors.green,
+                        "Monthly",
+                        Icons.calendar_today, // Icon for the Month button
+                        Colors.green, // Gradient start color
+                        Colors.lightGreenAccent, // Gradient end color
                             () {
                           setState(() {
                             currentCard = "month";
                           });
                           context.read<StatisticsBloc>().add(GetMonthlyChart());
                         },
-                        screenWidth * 0.22,
+                        screenWidth * 0.25, // Button width
                       ),
+
+
                       _buildButton(
-                        "Week",
-                        Colors.orange,
+                        "Balance",
+                        Icons.account_balance_wallet, // Icon for the Balance button
+                        Colors.orange, // Gradient start color
+                        Colors.redAccent, // Gradient end color
                             () {
                           setState(() {
-                            currentCard = "week";
-                          });
-                          // Weekly chart event can be added here
-                        },
-                        screenWidth * 0.22,
-                      ),
-                      _buildButton(
-                        "Balance", Colors.purple,
-                            () {setState(() {
                             currentCard = "balance";
-                           });
+                          });
                         },
-                        screenWidth * 0.24,
+                        screenWidth * 0.25, // Button width
                       ),
+
 
                     ],
                   ),
@@ -145,91 +150,51 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
 
 
 
-  Widget _buildButton(String title, Color color, VoidCallback onPressed, double width) {
+  Widget _buildButton(String title, IconData icon, Color startColor, Color endColor, VoidCallback onPressed, double width) {
     return SizedBox(
       width: width,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          elevation: 5,
+          padding: const EdgeInsets.all(0),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(17),
-            side: BorderSide(color: Colors.black38, width: 1.15),
+            borderRadius: BorderRadius.circular(20),
           ),
+          elevation: 8,
+          shadowColor: Colors.black.withOpacity(0.5),
+          backgroundColor: Colors.transparent, // Transparent to show gradient from Ink
         ),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 12,
-            color: color,
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [startColor, endColor],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
           ),
-        ),
-      ),
-    );
-  }
-
-
-
-
-
-
-  //Balance  Chart
-  Widget _buildBalanceCard(double screenWidth, double screenHeight) {
-    return SizedBox(
-      width: screenWidth * 1,
-      height: screenHeight * 0.60,
-      child: Card(
-        elevation: 10,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        shadowColor: Colors.grey.withOpacity(0.9),
-        margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Material(
-            elevation: 10.0,
-            shadowColor: Colors.black,
-            animationDuration: const Duration(milliseconds: 800),
-            borderRadius: BorderRadius.circular(25),
-            child: Padding(
-              padding: EdgeInsets.all(screenWidth * 0.05),
-              child: gauges.SfRadialGauge(
-                axes: [
-                  gauges.RadialAxis(
-                    pointers: [
-                      gauges.RangePointer(
-                        value: widget.totalBalance / 100,
-                        width: 35,
-                        cornerStyle: gauges.CornerStyle.bothCurve,
-                        gradient: const SweepGradient(colors: [
-                          Color(0xFFFFC434),
-                          Color(0xFFFF8209)
-                        ], stops: [0.1, 0.75]),
-                      ),
-                    ],
-                    axisLineStyle: gauges.AxisLineStyle(
-                      thickness: 35,
-                      color: Colors.grey.shade300,
-                    ),
-                    annotations: const [
-                      gauges.GaugeAnnotation(
-                        widget: Text(
-                          "Balance",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 25,
-                            color: Colors.black,
-                          ),
-                        ),
-                        angle: 270,
-                        positionFactor: 0,
-                      ),
-                    ],
+          child: Container(
+            width: double.infinity, // Take up all available width
+            height: 50, // Set height for the button
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -238,6 +203,118 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
   }
 
 
+
+
+
+
+
+
+
+//Balance Chart
+
+  Widget _buildBalanceCard(double screenWidth, double screenHeight) {
+    return SizedBox(
+      width: screenWidth * 1,
+      height: screenHeight * 0.70,
+      child: Card(
+        elevation: 10,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        shadowColor: Colors.grey.withOpacity(0.9),
+        margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+        child: Padding(
+          padding: const EdgeInsets.all(7.0),
+
+
+          // Balance Radial Gauge
+            child:   Material(
+                elevation: 10.0,
+                shadowColor: Colors.black,
+                animationDuration: const Duration(milliseconds: 900),
+                borderRadius: BorderRadius.circular(25),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(screenWidth * 0.05),
+                      child: gauges.SfRadialGauge(
+                        axes: [
+                          gauges.RadialAxis(
+                            maximum: 100,
+                            ranges: <gauges.GaugeRange>[
+                              gauges.GaugeRange(startValue: 0, endValue: 35, color: Colors.red),
+                              gauges.GaugeRange(startValue: 35, endValue: 70, color: Colors.orangeAccent),
+                              gauges.GaugeRange(startValue: 70, endValue: 100, color: Colors.green),
+                            ],
+                            pointers: <gauges.GaugePointer>[
+                              gauges.NeedlePointer(
+                                value: widget.totalBalance / 100,
+                                enableAnimation: true,
+                                animationDuration: 800,
+                              ),
+                            ],
+                            axisLineStyle: gauges.AxisLineStyle(
+                              thickness: 35,
+                              color: Colors.grey.shade300,
+                            ),
+                            annotations: const [
+                              gauges.GaugeAnnotation(
+                                widget: Text(
+                                  "Balance",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                angle: 360,
+                                positionFactor: 0,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildBalanceInfoRow(Colors.red, "High Risk: Reduce expenses"),
+                          const SizedBox(height: 5),
+                          _buildBalanceInfoRow(Colors.orangeAccent,"Moderate Risk: Monitor expenses"),
+                          const SizedBox(height: 5),
+                          _buildBalanceInfoRow(Colors.green, "Safe Balance: Status is stable"),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildBalanceInfoRow(Color color, String text) {
+    return Row(
+      children: [
+        Icon(Icons.circle, color: color, size: 15),
+        const SizedBox(width: 10),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
 
 
 
@@ -308,6 +385,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
 
 
 
+
   // Monthly Chart Card
   Widget _buildMonthChartCard(double screenWidth, double screenHeight) {
     return SizedBox(
@@ -325,28 +403,38 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
           child: Material(
             elevation: 10.0,
             shadowColor: Colors.black,
-            animationDuration: const Duration(milliseconds: 800),
+            animationDuration: const Duration(milliseconds: 400),
             borderRadius: BorderRadius.circular(20),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: charts.SfCartesianChart(
-                borderWidth: 0.5,
+                borderWidth: 0.9,
                 plotAreaBorderWidth: 0,
                 primaryXAxis: charts.CategoryAxis(isVisible: true,),
                 primaryYAxis: charts.NumericAxis(
                   isVisible: true,
                   minimum: 0,
-                  interval: 40, // Daha büyük aralıklar için
+                  interval: 80,
                   title: charts.AxisTitle(text: 'Total Expenses'),
                 ),
 
                 series: <charts.CartesianSeries>[
-                  charts.ColumnSeries<MapEntry<String,double>, String>(
+                  charts.ColumnSeries<MapEntry<String, double>, String>(
                     dataSource: monthlyExpenses.entries.toList(),
-                    width: 0.8,
-                    xValueMapper: (MapEntry<String,double> data, _) => data.key,
-                    yValueMapper: (MapEntry<String,double> data, _) => data.value,
-                    color: Colors.indigo,
+                    width: 0.3,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                    xValueMapper: (MapEntry<String, double> data, _) => data.key,
+                    yValueMapper: (MapEntry<String, double> data, _) => data.value,
+                    pointColorMapper: (MapEntry<String, double> data, int index) {
+                      List<Color> colors = [
+                        Colors.red, Colors.blueAccent, Colors.green,
+                        Colors.orange, Colors.purple,Colors.yellow, Colors.pink, Colors.teal, Colors.brown, Colors.cyan,
+                      ];
+                      return colors[index % colors.length];
+                    },
                   ),
                 ],
               ),
@@ -356,7 +444,6 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
       ),
     );
   }
-
 
 
 

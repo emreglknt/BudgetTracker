@@ -1,13 +1,10 @@
 import 'package:budget_family/presentation/StatisticsBloc/statistics_bloc.dart';
-import 'package:budget_family/presentation/add_expense.dart';
 import 'package:budget_family/presentation/allexpenseBloc/all_expense_bloc.dart';
 import 'package:budget_family/presentation/authBloc/auth_bloc.dart';
 import 'package:budget_family/presentation/budgetBloc/budget_bloc.dart';
 import 'package:budget_family/presentation/currencyBloc/currency_bloc.dart';
-import 'package:budget_family/presentation/home.dart';
 import 'package:budget_family/presentation/login.dart';
-import 'package:budget_family/presentation/statisticScreen.dart';
-import 'package:budget_family/utils/auth_manager.dart';
+import 'package:budget_family/utils/getIt.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,9 +12,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await getInit();
   runApp(const MyApp());
 }
-// main.dart
+
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

@@ -1,20 +1,23 @@
 import 'dart:math';
+import 'package:animated_icon/animated_icon.dart';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:budget_family/data/model/expenseModel.dart';
 import 'package:budget_family/presentation/login.dart';
 import 'package:budget_family/presentation/statisticScreen.dart';
+import 'package:budget_family/utils/auth_manager.dart';
 import 'package:budget_family/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'add_expense.dart';
 import 'allexpensePage.dart';
 import 'budgetBloc/budget_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String username;
 
-  const HomeScreen({super.key, required this.username});
+
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -22,16 +25,50 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController totalIncomeController = TextEditingController();
+  double totalIncome = 0.0;
+  double totalExpense = 0.0;
+  List<Expense> expenses = [];
+  double totalBalance=0.0;
+  String formattedBalance="";
+  int _selectedIndex = 0;
+  String? username;
+
+
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    if (index == 0) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
+    } else if (index == 1) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => ExpenseStatistics(totalBalance: totalBalance),
+        ),
+      );
+    }
+  }
+
 
 
   @override
   void initState() {
     super.initState();
+    username =AuthManager.readUsername();
     final currentState = context.read<BudgetBloc>().state;
     if (currentState is! GetAllExpenseIncomeSuccessState) {
       context.read<BudgetBloc>().add(GetAllExpenseAndIncomeRequest());
     }
+
   }
+
+
 
 
 
@@ -41,16 +78,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
 
     final ScrollController scrollController = ScrollController();
-    double totalIncome = 0.0;
-    double totalExpense = 0.0;
-    List<Expense> expenses = [];
-    double totalBalance=0.0;
-    String formattedBalance="";
 
     return Scaffold(
       bottomNavigationBar: ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(45)),
         child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
           backgroundColor: Colors.white,
           showSelectedLabels: true,
           showUnselectedLabels: true,
@@ -62,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart_rounded, color: Colors.indigo),
-              label: "Expense",
+              label: "Statistics",
             ),
           ],
         ),
@@ -71,8 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
-            //MaterialPageRoute(builder: (context) =>  ExpenseStatistics( totalBalance:totalBalance)));
-            MaterialPageRoute(builder: (context) =>  AddExpense()));
+            MaterialPageRoute(builder: (context) =>  const AddExpense()));
 
         },
         shape: const CircleBorder(),
@@ -129,15 +162,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
             if (state is GetAllExpenseIncomeSuccessState) {
               expenses = state.allExpenses;
-              totalExpense = state.totalExpense;
-              totalIncome = state.totalIncome;
+              totalExpense = double.parse(state.totalExpense.toStringAsFixed(2));
+              totalIncome = double.parse(state.totalIncome.toStringAsFixed(2));
               totalBalance = totalIncome-totalExpense;
               formattedBalance = totalBalance.toStringAsFixed(2);
             }
 
 
 
-            return buildMainContent(totalIncome, totalExpense, expenses,formattedBalance);
+            return buildMainContent(totalIncome, totalExpense, expenses,formattedBalance,username);
 
           },
         ),
@@ -149,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
 
-  Widget buildMainContent(double totalIncome, double totalExpense, List<Expense> expenses,String formattedBalance) {
+  Widget buildMainContent(double totalIncome, double totalExpense, List<Expense> expenses,String formattedBalance,String? username) {
     Size size = MediaQuery.of(context).size;
 
     return SafeArea(
@@ -158,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
         height: size.height,
         child: Column(
           children: [
-            _buildHeader(size),
+            _buildHeader(size,username),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Scrollbar(
@@ -207,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  Widget _buildHeader(Size size) {
+  Widget _buildHeader(Size size,String? username) {
     return Padding(
       padding: const EdgeInsets.only(left: 5),
       child: Row(
@@ -244,7 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "${widget.username}",
+                  username != null ? username : 'Guest',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w400,
@@ -260,7 +293,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: const Text('Logout 👋🏻'),
+                    title: Row(
+                      children:  [
+                        const Text('Logout'),
+                        const SizedBox(width: 10),
+                    AnimateIcon(
+                      key: UniqueKey(),
+                      onTap: () {},
+                      iconType: IconType.continueAnimation,
+                      height: 40,
+                      width: 40,
+                      color: Colors.orangeAccent,
+                      animateIcon: AnimateIcons.signOut,
+                    ),
+                      ],
+                    ),
                     content: const Text('Are you sure you want to logout?'),
                     actions: [
                       TextButton(
@@ -338,6 +385,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     size: 30,
                   ),
                 ),
+                Positioned(
+                  left: 5,
+                    top: 5,
+                    child: AnimateIcon(
+                      key: UniqueKey(),
+                      onTap: () {},
+                      iconType: IconType.continueAnimation,
+                      height: 50,
+                      width: 50,
+                      color: Color.fromRGBO(
+                          Random.secure().nextInt(255),
+                          Random.secure().nextInt(255),
+                          Random.secure().nextInt(255),
+                          1),
+                      animateIcon: AnimateIcons.dollar,
+                    ),)
               ],
             ),
           ),
@@ -385,17 +448,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(width: 15),
 
                     // text  total ıncome
-                    Text('Total Income', style: TextStyle(fontSize: 15,
+                    const Text('Total Income', style: TextStyle(fontSize: 15,
                         fontWeight: FontWeight.w400,
                         color: Colors.white)),
-                    Text("$totalIncome ₺", style: TextStyle(fontSize: 17,
+                    Text("$totalIncome ₺", style: const TextStyle(fontSize: 17,
                         fontWeight: FontWeight.w500,
                         color: Colors.white)),
 
 
-
                     //button add income
-                    SizedBox(height: 10),
+                   const  SizedBox(height: 10),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orangeAccent,
@@ -412,7 +474,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              shape: RoundedRectangleBorder(
+                              shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(30)),
                               ),
                               title: const Text(
@@ -469,8 +531,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   ],
                 ),
-                Positioned(right: 10, top:5 ,
-                  child: Text(
+                const Positioned(right: 10, top:5 ,
+                  child:  Text(
                     "💳", style: TextStyle(fontSize: 30),
                   ),
                 ),
@@ -485,6 +547,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 fit: BoxFit.cover,
               ),
             ),
+
 
 
               ],
@@ -667,8 +730,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(expense.category, style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w500)),
                           const SizedBox(height: 5),
-                          Text(expense.date.toString(), style: TextStyle(
-                              color: Colors.grey[600])),
+                          Text(DateFormat('dd/MMMM/yyyy   HH:mm').format(expense.date), style: TextStyle(
+                            color: Colors.grey[600],
+                          )),
+
                         ],
                       ),
                     ],

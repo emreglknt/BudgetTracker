@@ -2,6 +2,7 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import '../data/model/expenseModel.dart';
 import '../utils/utils.dart';
 import 'allexpenseBloc/all_expense_bloc.dart';
@@ -219,7 +220,7 @@ class _AllExpenseScreenState extends State<AllExpenseScreen> {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                           child: Container(
-                            height: 80,
+                            height: 100,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(15),
@@ -254,8 +255,12 @@ class _AllExpenseScreenState extends State<AllExpenseScreen> {
                                           Text(expense.category, style: const TextStyle(
                                               fontSize: 16, fontWeight: FontWeight.w500)),
                                           const SizedBox(height: 5),
-                                          Text(expense.date.toString(), style: TextStyle(
-                                              color: Colors.grey[600])),
+                                          Text(DateFormat('dd-MMMM-yyyy ').format(expense.date), style: TextStyle(
+                                            color: Colors.grey[600],
+                                          )),
+                                          Text(DateFormat('HH:mm').format(expense.date), style: TextStyle(
+                                            color: Colors.grey[600],
+                                          )),
                                         ],
                                       ),
                                     ],

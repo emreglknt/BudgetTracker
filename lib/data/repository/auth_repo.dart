@@ -23,11 +23,10 @@ class AuthRepository extends IAuthRepository{
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 
-
+//Login
   @override
   Future<Either<String, String>> login(String email, String password) async {
     try {
-      // FirebaseAuth ile giriş yapma
       UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -36,11 +35,10 @@ class AuthRepository extends IAuthRepository{
       User? user = userCredential.user;
 
       if (user != null) {
-        // Firestore'dan kullanıcı adını alma
         DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
-
         if (userDoc.exists) {
           String username = userDoc.get('username');
+          await AuthManager.saveTokenanUsername(user.uid,username);
           return right(username);
         } else {
           return left("Kullanıcı bilgileri bulunamadı.");
@@ -63,7 +61,6 @@ class AuthRepository extends IAuthRepository{
   @override
   Future<Either<String, String>> register(String username, String email, String password) async {
     try {
-      // FirebaseAuth ile kullanıcı oluşturma
       UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -72,12 +69,10 @@ class AuthRepository extends IAuthRepository{
       User? user = userCredential.user;
 
       if (user != null) {
-        // Kullanıcı adını displayName olarak güncelleme
         await user.updateDisplayName(username);
         await user.reload();
         user = _firebaseAuth.currentUser;
 
-        // Firestore'da kullanıcı bilgilerini saklama
         await _firestore.collection('users').doc(user!.uid).set({
           'username': username,
           'email': email,
@@ -103,6 +98,7 @@ class AuthRepository extends IAuthRepository{
   Future<void> logout() async {
     try {
       await FirebaseAuth.instance.signOut();
+      await AuthManager.logout();
     } catch (e) {
       throw Exception("Çıkış işlemi sırasında bir hata oluştu: $e");
     }
