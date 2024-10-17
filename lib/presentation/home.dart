@@ -3,6 +3,7 @@ import 'package:animated_icon/animated_icon.dart';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:budget_family/data/model/expenseModel.dart';
 import 'package:budget_family/presentation/login.dart';
+import 'package:budget_family/presentation/profileScreen.dart';
 import 'package:budget_family/presentation/statisticScreen.dart';
 import 'package:budget_family/utils/auth_manager.dart';
 import 'package:budget_family/utils/utils.dart';
@@ -45,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (index == 0) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) =>const HomeScreen(),
+          builder: (context) =>const ProfileScreen(),
         ),
       );
     } else if (index == 1) {
@@ -243,30 +244,40 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  Widget _buildHeader(Size size,String? username) {
+  Widget _buildHeader(Size size, String? username) {
     var d = AppLocalizations.of(context)!;
+
     return Padding(
-      padding: const EdgeInsets.only(left: 5),
+      padding: const EdgeInsets.only(left: 15,top: 10),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Stack(
-            alignment: Alignment.center,
+
+          Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.indigo,
-                  ),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.indigo,
+                ),
+                child: const Icon(Icons.person, color: Colors.white, size: 24),
+              ),
+              const SizedBox(height: 1),
+              Text(
+                username ?? 'Guest',
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.indigo,
                 ),
               ),
-              Icon(Icons.person, color: Colors.white),
             ],
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 22),
+
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,18 +290,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.grey.shade700,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  username != null ? username : 'Guest',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.orange,
-                  ),
-                ),
               ],
             ),
           ),
+
           IconButton(
             onPressed: () {
               showDialog(
@@ -298,18 +301,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: Row(
-                      children:  [
-                         Text(d.logout),
+                      children: [
+                        Text(d.logout),
                         const SizedBox(width: 10),
-                    AnimateIcon(
-                      key: UniqueKey(),
-                      onTap: () {},
-                      iconType: IconType.continueAnimation,
-                      height: 40,
-                      width: 40,
-                      color: Colors.orangeAccent,
-                      animateIcon: AnimateIcons.signOut,
-                    ),
+                        AnimateIcon(
+                          key: UniqueKey(),
+                          onTap: () {},
+                          iconType: IconType.continueAnimation,
+                          height: 40,
+                          width: 40,
+                          color: Colors.orangeAccent,
+                          animateIcon: AnimateIcons.signOut,
+                        ),
                       ],
                     ),
                     content: Text(d.are_you_sure_logout),
@@ -324,14 +327,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           context.read<BudgetBloc>().add(AuthLogoutRequest());
                         },
-                        child:  Text(d.logout),
+                        child: Text(d.logout),
                       ),
                     ],
                   );
                 },
               );
             },
-
             icon: const Icon(Icons.logout),
             color: Colors.indigo,
             iconSize: 30,
@@ -340,6 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
 
 
   // 1. FIRST CARD

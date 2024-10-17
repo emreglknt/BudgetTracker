@@ -8,10 +8,10 @@ class AuthManager {
   static final ValueNotifier<String?> authUsername = ValueNotifier(null);
   static SharedPreferences get _sharedPreferences => locator<SharedPreferences>();
 
-  // Asenkron init metodu SharedPreferences'ı yükler
+
   static Future<void> init() async {
     final token = _sharedPreferences.getString('authToken');
-    final username = _sharedPreferences.getString('authUsername'); // Username kontrolü
+    final username = _sharedPreferences.getString('authUsername');
     if (token != null && token.isNotEmpty) {
       authChangeNotifier.value = token;
       if (username != null && username.isNotEmpty) {

@@ -15,7 +15,6 @@ class SplashScreen extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     _checkUserLoggedIn(context);
     return Scaffold(
-      backgroundColor: Colors.indigo.shade400,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -30,8 +29,8 @@ class SplashScreen extends StatelessWidget {
               'Budge🆃 ',
               style: TextStyle(
                 fontSize: 35,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+                fontWeight: FontWeight.w500,
+                color: Colors.indigo,
               ),
             ),
           ],
