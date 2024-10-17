@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../data/model/expenseModel.dart';
 import '../utils/utils.dart';
 import 'allexpenseBloc/all_expense_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AllExpenseScreen extends StatefulWidget {
   final double totalExpense;
@@ -37,8 +38,8 @@ class _AllExpenseScreenState extends State<AllExpenseScreen> {
   Widget build(BuildContext context) {
 
     //for filtering opitons
-
     final List<String> selectedCategories = [];
+    var d = AppLocalizations.of(context)!;
 
 
 
@@ -52,7 +53,7 @@ class _AllExpenseScreenState extends State<AllExpenseScreen> {
           },
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.indigo),
         ),
-        title: Text('All Expenses'),
+        title: Text(d.all_expenses),
         actions: [
           IconButton(
             icon: Icon(Icons.filter_list),
@@ -73,10 +74,10 @@ class _AllExpenseScreenState extends State<AllExpenseScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                               const  Padding(
+                                 Padding(
                                   padding: const EdgeInsets.only(left: 10.0, top: 15.0, bottom: 10.0),
-                                  child: const Text(
-                                    'Select Categories',
+                                  child:  Text(
+                                    d.select_categories,
                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
                                   ),
                                 ),
@@ -106,7 +107,7 @@ class _AllExpenseScreenState extends State<AllExpenseScreen> {
                                             } else {
                                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                                 AnimatedSnackBar.material(
-                                                "You can select up to 8 categories only.",
+                                                d.you_can_select_up_to_8_categories_only,
                                                   type: AnimatedSnackBarType.warning,
                                                   mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                                                   duration: const Duration(seconds: 4),
@@ -142,8 +143,8 @@ class _AllExpenseScreenState extends State<AllExpenseScreen> {
                                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                       backgroundColor: Colors.blue,
                                     ),
-                                    child: const Text(
-                                      'Apply Filters',
+                                    child:  Text(
+                                      d.apply_filters,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
@@ -192,7 +193,7 @@ class _AllExpenseScreenState extends State<AllExpenseScreen> {
             if(expenses.isEmpty){
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 AnimatedSnackBar.material(
-                  "You do not have any expenses in this category.",
+                  d.you_do_not_have_any_expenses_in_this_category,
                   type: AnimatedSnackBarType.warning,
                   mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                   duration: const Duration(seconds: 5),
@@ -292,8 +293,8 @@ class _AllExpenseScreenState extends State<AllExpenseScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Total Income',
+                   Text(
+                    d.total_income,
                     style: TextStyle(
                       color: Colors.green,
                       fontSize: 12,
@@ -314,8 +315,8 @@ class _AllExpenseScreenState extends State<AllExpenseScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                 const Text(
-                    'Total Expense',
+                  Text(
+                   d.total_expense ,
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 14,
@@ -336,8 +337,8 @@ class _AllExpenseScreenState extends State<AllExpenseScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Text(
-                    'Balance',
+                   Text(
+                   d.balance ,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,

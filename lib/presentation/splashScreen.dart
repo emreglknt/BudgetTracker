@@ -1,38 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:budget_family/utils/auth_manager.dart';
+import 'package:lottie/lottie.dart';
 
 import 'home.dart';
 import 'login.dart';
 
-/*
+
 class SplashScreen extends StatelessWidget {
+
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     _checkUserLoggedIn(context);
     return Scaffold(
+      backgroundColor: Colors.indigo.shade400,
       body: Center(
-        child: CircularProgressIndicator(), // Loading indicator
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: size.height * 0.44,
+              width: size.width,
+              child: Lottie.asset('assets/splash.json'),
+            ),
+            SizedBox(height: size.height * 0.1,),
+            const Text(
+              'Budge🆃 ',
+              style: TextStyle(
+                fontSize: 35,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),// Loading indicator
+
       ),
     );
   }
 
   void _checkUserLoggedIn(BuildContext context) async {
     final token = AuthManager.readAuth();
-
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (token.isNotEmpty) {
-      // User is logged in, navigate to HomeScreen
+    await Future.delayed(const Duration(seconds: 7));
+    if (token != null){
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const HomeScreen()), // Replace with your actual HomeScreen
       );
     } else {
-      // User is not logged in, navigate to LoginScreen
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const LoginScreen()), // Your existing LoginScreen
       );
     }
   }
-}*/
+}

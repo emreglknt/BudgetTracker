@@ -9,10 +9,12 @@ import 'package:budget_family/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'add_expense.dart';
 import 'allexpensePage.dart';
 import 'budgetBloc/budget_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -43,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (index == 0) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
+          builder: (context) =>const HomeScreen(),
         ),
       );
     } else if (index == 1) {
@@ -78,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
 
     final ScrollController scrollController = ScrollController();
+    var d = AppLocalizations.of(context)!;
 
     return Scaffold(
       bottomNavigationBar: ClipRRect(
@@ -89,16 +92,16 @@ class _HomeScreenState extends State<HomeScreen> {
           showSelectedLabels: true,
           showUnselectedLabels: true,
           elevation: 4,
-          items: const [
+          items:  [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Colors.indigo),
-              label: "Home",
+              icon: FaIcon(FontAwesomeIcons.bullseye, color: Colors.indigo),
+              label: "Expense Goal",
             ),
+
             BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart_rounded, color: Colors.indigo),
-              label: "Statistics",
-            ),
-          ],
+              icon: FaIcon(FontAwesomeIcons.chartSimple, color: Colors.indigo),
+              label: d.statistics_label,
+            ),],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -151,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if(state is AddIncomeSuccessState){
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 AnimatedSnackBar.material(
-                  "Income Updated Successfully",
+                  d.income_update_success,
                   type: AnimatedSnackBarType.success,
                   mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                   duration: const Duration(seconds: 4),
@@ -184,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget buildMainContent(double totalIncome, double totalExpense, List<Expense> expenses,String formattedBalance,String? username) {
     Size size = MediaQuery.of(context).size;
-
+    var d = AppLocalizations.of(context)!;
     return SafeArea(
       child: SizedBox(
         width: size.width,
@@ -208,12 +211,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(right: 20.0),
               child: Align(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  'Add Income ➤',
+                  d.add_income,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -241,6 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   Widget _buildHeader(Size size,String? username) {
+    var d = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(left: 5),
       child: Row(
@@ -268,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Welcome to BudgeT 👋",
+                  d.welcome,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
@@ -295,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return AlertDialog(
                     title: Row(
                       children:  [
-                        const Text('Logout'),
+                         Text(d.logout),
                         const SizedBox(width: 10),
                     AnimateIcon(
                       key: UniqueKey(),
@@ -308,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                       ],
                     ),
-                    content: const Text('Are you sure you want to logout?'),
+                    content: Text(d.are_you_sure_logout),
                     actions: [
                       TextButton(
                         onPressed: () {
@@ -320,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           context.read<BudgetBloc>().add(AuthLogoutRequest());
                         },
-                        child: const Text('Logout'),
+                        child:  Text(d.logout),
                       ),
                     ],
                   );
@@ -340,6 +344,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // 1. FIRST CARD
   Widget _buildBalanceCard(double totalExpense,double totalIncome,String formattedBalance) {
+    var d = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.only(top: 7.0, left: 10.0, bottom: 7.0,),
       child: SingleChildScrollView(
@@ -365,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Total Balance',
+                    Text(d.total_balance,
                         style: TextStyle(fontSize: 25,
                             fontWeight: FontWeight.w600,
                             color: Colors.white)),
@@ -394,11 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconType: IconType.continueAnimation,
                       height: 50,
                       width: 50,
-                      color: Color.fromRGBO(
-                          Random.secure().nextInt(255),
-                          Random.secure().nextInt(255),
-                          Random.secure().nextInt(255),
-                          1),
+                      color: Colors.orange,
                       animateIcon: AnimateIcons.dollar,
                     ),)
               ],
@@ -415,6 +417,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //2. SECOND CARD
   //add expense and info card
   Widget _buildBalanceCard2(double totalIncome) {
+    var d = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: SingleChildScrollView(
@@ -440,7 +443,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Update Wallet',
+                    Text(d.update_wallet,
                         style: TextStyle(fontSize: 25,
                             fontWeight: FontWeight.w600,
                             color: Colors.white)),
@@ -448,7 +451,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(width: 15),
 
                     // text  total ıncome
-                    const Text('Total Income', style: TextStyle(fontSize: 15,
+                    Text(d.total_income, style: TextStyle(fontSize: 15,
                         fontWeight: FontWeight.w400,
                         color: Colors.white)),
                     Text("$totalIncome ₺", style: const TextStyle(fontSize: 17,
@@ -477,8 +480,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(30)),
                               ),
-                              title: const Text(
-                                'Add Income',
+                              title: Text(
+                                d.add_income,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   color: Colors.orangeAccent,
@@ -487,10 +490,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               content: TextField(
                                 controller: totalIncomeController,
                                 keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(
-                                  hintText: 'Add Income',
-                                  hintStyle: TextStyle(fontWeight: FontWeight.w300,color: Colors.grey),
-                                  focusedBorder: UnderlineInputBorder(
+                                decoration:  InputDecoration(
+                                  hintText: d.add_income,
+                                  hintStyle: const TextStyle(fontWeight: FontWeight.w300,color: Colors.grey),
+                                  focusedBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(color: Colors.orangeAccent),
                                   ),
                                 ),
@@ -500,7 +503,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                                  child: Text(d.cancel, style: const TextStyle(color: Colors.grey)),
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -509,8 +512,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     totalIncomeController.clear();
                                     Navigator.of(context).pop();
                                   },
-                                  child: const Text(
-                                    'Add',
+                                  child:  Text(
+                                    d.add,
                                     style: TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -519,13 +522,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         );
                       },
-                      child: const Text(
-                        'Add Income',
+                      child:  Text(
+                        d.add_income,
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
-
-
 
                     SizedBox(height: 10),
 
@@ -548,8 +549,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-
-
               ],
             ),
           ),
@@ -557,6 +556,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
 
 
   Widget _buildIncomeExpenseRow(double totalExpense,double totalIncome) {
@@ -570,6 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildIncomeWidget(double totalIncome) {
+    var d = AppLocalizations.of(context)!;
     return Row(
       children: [
         Container(
@@ -586,7 +587,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Total Income', style: TextStyle(fontSize: 15,
+            Text(d.total_income, style: TextStyle(fontSize: 15,
                 fontWeight: FontWeight.w400,
                 color: Colors.white)),
             Text("$totalIncome ₺", style: TextStyle(fontSize: 17,
@@ -599,6 +600,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildExpenseWidget(double totalExpense) {
+    var d = AppLocalizations.of(context)!;
     return Row(
       children: [
         Container(
@@ -615,7 +617,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text('Total Expense', style: TextStyle(fontSize: 15,
+            Text(d.total_expense, style: TextStyle(fontSize: 15,
                 fontWeight: FontWeight.w400,
                 color: Colors.white)),
             Text("$totalExpense ₺", style: TextStyle(fontSize: 17,
@@ -630,12 +632,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   Widget _buildTransactionHistoryHeader() {
+    var d = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
-          'Transactions History ˇ',
+         d.transactions_history,
           style: TextStyle(fontSize: 18,
               fontWeight: FontWeight.w400,
               color: Colors.grey[600]),
@@ -645,6 +648,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildViewAllExpenseHeader(double totalExpense, double totalIncome, String formattedBalance) {
+    var d = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
       child: Align(
@@ -669,8 +673,8 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
           child: Text(
-            "View All",
-            style: TextStyle(
+            d.view_all,
+            style: const TextStyle(
               color: Colors.orangeAccent,
               fontSize: 15,
               fontWeight: FontWeight.w400,

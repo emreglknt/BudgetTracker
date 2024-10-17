@@ -35,6 +35,11 @@ dependencies:
   syncfusion_flutter_gauges: ^27.1.51
   syncfusion_flutter_charts: ^27.1.51
   animated_icon: ^0.0.9
+  font_awesome_flutter: ^10.7.0
+
+  flutter_localizations:
+    sdk: flutter
+
 
 
 
@@ -46,25 +51,12 @@ dev_dependencies:
 
 
 
-# The following section is specific to Flutter packages.
+
 flutter:
+  generate: true
 
   uses-material-design: true
   assets:
     - assets/
 
 
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages

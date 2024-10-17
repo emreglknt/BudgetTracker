@@ -1,0 +1,103 @@
+ {
+
+    "logged_in_successfully": "Başarıyla Giriş Yapıldı",
+    "login_to_your_account": "Hesabınıza giriş yapın",
+    "please_fill_all_fields": "Lütfen tüm alanları doldurun",
+    "login": "Giriş Yap",
+    "dont_have_an_account": "Hesabınız yok mu?",
+    "create_account": "Hesap Oluştur",
+
+
+
+    "user_signed_up_successfully": "Hesabınız başarıyla kaydedildi",
+    "username": "Kullanıcı Adı",
+    "retype_password": "Şifreyi Tekrar Girin",
+    "password": "Şifre",
+    "please_fill_all_fields": "Lütfen tüm alanları doldurun",
+    "passwords_not_match": "Şifreler uyuşmuyor",
+    "sign_up": "Kayıt Ol",
+    "have_an_account": "Hesabınız var mı?",
+    "login": "Giriş Yap",
+
+
+
+
+    "welcome": "BudgeT'e Hoş Geldiniz 👋",
+    "add_income": "Gelir Ekle",
+    "total_balance": "Toplam Bakiye",
+    "logout": "Çıkış Yap",
+    "are_you_sure_logout": "Çıkış yapmak istediğinizden emin misiniz?",
+    "income_update_success": "Gelir Başarıyla Güncellendi",
+    "update_wallet": "Cüzdanı Güncelle",
+    "total_income": "Toplam Gelir",
+    "add_income": "Gelir Ekle",
+    "cancel": "İptal",
+    "add": "Ekle",
+    "total_expense": "Toplam Harcama",
+    "transactions_history": "İşlem Geçmişi ˇ",
+    "view_all": "Tümünü Görüntüle",
+
+    "expense_added_successfully": "Harcama başarıyla eklendi!",
+    "add_expense": "Harcama Ekle",
+    "expense_price": "Harcama Tutarı",
+    "select_category": "Kategori Seç ˬ",
+    "date": "Tarih",
+    "please_fill_all_fields": "Lütfen tüm alanları doldurun",
+    "please_enter_valid_expense_amount": "Lütfen geçerli bir harcama tutarı girin",
+
+    "all_expenses": "Tüm Harcamalar",
+    "select_categories": "Kategorileri Seç",
+    "you_can_select_up_to_8_categories_only": "Sadece 8 kategori seçebilirsiniz.",
+    "apply_filters": "Filtreleri Uygula",
+    "you_do_not_have_any_expenses_in_this_category": "Bu kategoride hiç harcamanız yok.",
+    "balance": "Bakiye",
+
+
+    "expense_statistics": "Harcama İstatistikleri 📊",
+    "statistics_label": "İstatistik",
+    "category": "Kategori",
+    "monthly": "Aylık",
+    "balance": "Bakiye",
+    "high_risk_reduce_expenses": "Yüksek Risk: Harcamaları azaltın",
+    "moderate_risk_monitor_expenses": "Orta Risk: Harcamaları izleyin",
+    "safe_balance_status_is_stable": "Güvenli Bakiye: Durum stabil",
+    "expenses": "Harcamalar",
+    "total_expenses": "Toplam Harcamalar",
+
+    "food": "Yiyecek",
+    "transport": "Ulaşım",
+    "shopping": "Alışveriş",
+    "bills": "Faturalar",
+    "entertainment": "Eğlence",
+    "health": "Sağlık",
+    "education": "Eğitim",
+    "travel": "Seyahat",
+    "utilities": "Hizmetler",
+    "rent": "Kira",
+    "subscriptions": "Abonelikler",
+    "insurance": "Sigorta",
+    "groceries": "Market Alışverişi",
+    "fitness": "Fitness",
+    "pets": "Evcil Hayvanlar",
+    "clothing": "Giyim",
+    "charity": "Hayır Kurumu",
+    "gifts": "Hediyeler",
+    "beauty": "Güzellik",
+    "electronics": "Elektronik",
+    "furniture": "Mobilya",
+    "internet": "İnternet",
+    "phone": "Telefon",
+    "vacation": "Tatil",
+    "dining_out": "Dışarıda Yemek",
+    "alcohol": "Alkol",
+    "coffee": "Kahve",
+    "kids": "Çocuklar",
+    "books": "Kitaplar",
+    "music": "Müzik",
+    "savings": "Tasarruf",
+    "investment": "Yatırım"
+
+
+
+
+ }

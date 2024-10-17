@@ -16,6 +16,7 @@ abstract class authApiDataSource {
   Stream<Map<String, double>> getPieChartList();
   Future<double> getCurrency(String target);
   Stream<Map<String, double>> getMonthlyExpenses();
+
 }
 
 class BudgetApi implements authApiDataSource {
@@ -161,6 +162,8 @@ class BudgetApi implements authApiDataSource {
 
 
 
+
+
   // Add income and return the updated total income
   @override
   Future<double> addIncome(double income) async {
@@ -205,10 +208,7 @@ class BudgetApi implements authApiDataSource {
         'target': "TRY",
       });
 
-
       ExchangeRateResponse exchangeRateResponse = ExchangeRateResponse.fromJson(currencyResponse.data);
-
-
 
       return exchangeRateResponse.data.mid;
     } catch (e) {
@@ -306,6 +306,12 @@ class BudgetApi implements authApiDataSource {
       throw Exception("Error Occurred: $e");
     }
   }
+
+
+
+
+
+
 
 
 

@@ -127,6 +127,10 @@ class MainRepository extends IMainRepository{
 
 
 
+
+
+
+
   // categories and their total expenses for PieChart
 
   @override
@@ -182,6 +186,14 @@ class MainRepository extends IMainRepository{
       return left('Currency Error');
     }
   }
+
+
+
+
+
+
+
+
 
 
 

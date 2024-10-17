@@ -3,7 +3,7 @@ import 'package:budget_family/presentation/currencyBloc/currency_bloc.dart'; // 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../utils/utils.dart';
 
 class AddExpense extends StatefulWidget {
@@ -19,7 +19,7 @@ class _AddExpenseState extends State<AddExpense> {
   final TextEditingController dateController = TextEditingController();
   DateTime selectDate = DateTime.now();
   int? selectedCategoryIndex;
-  String selectedCurrency = 'TRY'; // Default value for TRY
+  String selectedCurrency = 'TRY';
 
   @override
   void initState() {
@@ -33,6 +33,7 @@ class _AddExpenseState extends State<AddExpense> {
   @override
   Widget build(BuildContext context) {
     double currencyExchange = 1.0;
+    var d = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -66,7 +67,7 @@ class _AddExpenseState extends State<AddExpense> {
 
           if (currencyState is AddExpenseSuccessState) {
             AnimatedSnackBar.material(
-              'Expense added successfully!',
+              d.expense_added_successfully,
               type: AnimatedSnackBarType.success,
               mobileSnackBarPosition: MobileSnackBarPosition.bottom,
               duration: const Duration(seconds: 4),
@@ -92,8 +93,8 @@ class _AddExpenseState extends State<AddExpense> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  'Add Expense',
+                 Text(
+                 d.add_expense ,
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w400,
@@ -117,7 +118,7 @@ class _AddExpenseState extends State<AddExpense> {
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: Colors.indigo.shade50,
-                                  hintText: 'Expense Price',
+                                  hintText: d.expense_price,
                                   hintStyle: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     color: Colors.grey,
@@ -231,12 +232,12 @@ class _AddExpenseState extends State<AddExpense> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Padding(
+                 Padding(
                   padding: EdgeInsets.only(left: 20),
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      'Select Category ˬ',
+                      d.select_category,
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w400,
@@ -329,7 +330,7 @@ class _AddExpenseState extends State<AddExpense> {
                         color: Colors.yellow[700],
                         size: 20,
                       ),
-                      hintText: 'Date',
+                      hintText: d.date,
                       hintStyle: const TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.black45,
@@ -352,7 +353,7 @@ class _AddExpenseState extends State<AddExpense> {
                           categoryController.text.isEmpty ||
                           dateController.text.isEmpty) {
                         AnimatedSnackBar.material(
-                          'Please fill all fields',
+                          d.please_fill_all_fields,
                           type: AnimatedSnackBarType.warning,
                           mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                           duration: const Duration(seconds: 4),
@@ -376,7 +377,7 @@ class _AddExpenseState extends State<AddExpense> {
                            );
                          } catch (e) {
                            AnimatedSnackBar.material(
-                             'Please enter a valid expense amount',
+                             d.please_enter_valid_expense_amount,
                              type: AnimatedSnackBarType.info,
                              mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                              duration: const Duration(seconds: 3),
@@ -398,8 +399,8 @@ class _AddExpenseState extends State<AddExpense> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    child: const Text(
-                      'Add Expense',
+                    child: Text(
+                      d.add_expense,
                       style: TextStyle(fontSize: 17),
                     ),
                   ),

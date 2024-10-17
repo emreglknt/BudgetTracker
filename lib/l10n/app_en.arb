@@ -1,0 +1,104 @@
+  {
+
+
+    "logged_in_successfully": "Logged in Successfully",
+    "login_to_your_account": "Login to your account",
+    "please_fill_all_fields": "Please fill all fields",
+    "login": "Login",
+    "dont_have_an_account": "Don't have an account?",
+    "create_account": "Create Account",
+
+
+    "user_signed_up_successfully": "User signed-up Successfully",
+    "username": "Username",
+    "retype_password": "Re-type Password",
+    "password": "Password",
+    "please_fill_all_fields": "Please fill all fields",
+    "passwords_not_match": "Passwords not match",
+    "sign_up": "Sign Up",
+    "have_an_account": "Have an account?",
+    "login": "Login",
+
+
+    "welcome": "Welcome to BudgeT 👋",
+    "add_income": "Add Income ",
+    "total_balance": "Total Balance",
+    "logout": "Logout",
+    "are_you_sure_logout": "Are you sure you want to logout?",
+    "income_update_success": "Income Updated Successfully",
+    "update_wallet": "Update Wallet",
+    "total_income": "Total Income",
+    "add_income": "Add Income",
+    "cancel": "Cancel",
+    "add": "Add",
+    "total_expense": "Total Expense",
+    "transactions_history": "Transactions History ˇ",
+    "view_all": "View All",
+
+
+    "expense_added_successfully": "Expense added successfully!",
+    "add_expense": "Add Expense",
+    "expense_price": "Expense Price",
+    "select_category": "Select Category ˬ",
+    "date": "Date",
+    "please_fill_all_fields": "Please fill all fields",
+    "please_enter_valid_expense_amount": "Please enter a valid expense amount",
+
+
+    "all_expenses": "All Expenses",
+    "select_categories": "Select Categories",
+    "you_can_select_up_to_8_categories_only": "You can select up to 8 categories only.",
+    "apply_filters": "Apply Filters",
+    "you_do_not_have_any_expenses_in_this_category": "You do not have any expenses in this category.",
+    "balance": "Balance",
+
+    "expense_statistics": "Expense Statistics 📊",
+    "statistics_label": "Statistics",
+    "category": "Category",
+    "monthly": "Monthly",
+    "balance": "Balance",
+    "high_risk_reduce_expenses": "High Risk: Reduce expenses",
+    "moderate_risk_monitor_expenses": "Moderate Risk: Monitor expenses",
+    "safe_balance_status_is_stable": "Safe Balance: Status is stable",
+    "expenses": "Expenses",
+    "total_expenses": "Total Expenses",
+
+
+    "food": "Food",
+    "transport": "Transport",
+    "shopping": "Shopping",
+    "bills": "Bills",
+    "entertainment": "Entertainment",
+    "health": "Health",
+    "education": "Education",
+    "travel": "Travel",
+    "utilities": "Utilities",
+    "rent": "Rent",
+    "subscriptions": "Subscriptions",
+    "insurance": "Insurance",
+    "groceries": "Groceries",
+    "fitness": "Fitness",
+    "pets": "Pets",
+    "clothing": "Clothing",
+    "charity": "Charity",
+    "gifts": "Gifts",
+    "beauty": "Beauty",
+    "electronics": "Electronics",
+    "furniture": "Furniture",
+    "internet": "Internet",
+    "phone": "Phone",
+    "vacation": "Vacation",
+    "dining_out": "Dining Out",
+    "alcohol": "Alcohol",
+    "coffee": "Coffee",
+    "kids": "Kids",
+    "books": "Books",
+    "music": "Music",
+    "savings": "Savings",
+    "investment": "Investment"
+
+
+
+
+
+  }

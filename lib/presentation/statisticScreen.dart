@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as charts;
 import 'package:syncfusion_flutter_gauges/gauges.dart' as gauges;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../utils/utils.dart';
 
@@ -28,6 +29,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    var d = AppLocalizations.of(context)!; // localization için
 
     return Scaffold(
 
@@ -39,7 +41,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.indigo),
         ),
         title: Text(
-          "Expense Statistics 📊",
+       d.expense_statistics,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w400,
@@ -88,7 +90,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildButton(
-                        "Category",
+                        d.category,
                         Icons.category, // Icon for the Category button
                         Colors.blue, // Gradient start color
                         Colors.lightBlueAccent, // Gradient end color
@@ -102,7 +104,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
                       ),
 
                       _buildButton(
-                        "Monthly",
+                        d.monthly,
                         Icons.calendar_today, // Icon for the Month button
                         Colors.green, // Gradient start color
                         Colors.lightGreenAccent, // Gradient end color
@@ -117,7 +119,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
 
 
                       _buildButton(
-                        "Balance",
+                        d.balance,
                         Icons.account_balance_wallet, // Icon for the Balance button
                         Colors.orange, // Gradient start color
                         Colors.redAccent, // Gradient end color
@@ -213,6 +215,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
 //Balance Chart
 
   Widget _buildBalanceCard(double screenWidth, double screenHeight) {
+    var d = AppLocalizations.of(context)!;
     return SizedBox(
       width: screenWidth * 1,
       height: screenHeight * 0.70,
@@ -257,10 +260,10 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
                               thickness: 35,
                               color: Colors.grey.shade300,
                             ),
-                            annotations: const [
+                            annotations: [
                               gauges.GaugeAnnotation(
                                 widget: Text(
-                                  "Balance",
+                                  d.balance,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 20,
@@ -280,11 +283,11 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildBalanceInfoRow(Colors.red, "High Risk: Reduce expenses"),
+                          _buildBalanceInfoRow(Colors.red, d.high_risk_reduce_expenses),
                           const SizedBox(height: 5),
-                          _buildBalanceInfoRow(Colors.orangeAccent,"Moderate Risk: Monitor expenses"),
+                          _buildBalanceInfoRow(Colors.orangeAccent,d.moderate_risk_monitor_expenses),
                           const SizedBox(height: 5),
-                          _buildBalanceInfoRow(Colors.green, "Safe Balance: Status is stable"),
+                          _buildBalanceInfoRow(Colors.green, d.safe_balance_status_is_stable),
                         ],
                       ),
                     ),
@@ -320,6 +323,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
 
   // PieChart Card
   Widget _buildPieChartCard(double screenWidth, double screenHeight) {
+    var d = AppLocalizations.of(context)!;
     return SizedBox(
       width: screenWidth * 1,
       height: screenHeight * 0.60,
@@ -348,7 +352,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
                 initialAngleInDegree: 45,
                 chartType: ChartType.ring,
                 ringStrokeWidth: screenWidth * 0.20,
-                centerText: "Expenses",
+                centerText: d.expenses,
                 centerTextStyle: TextStyle(
                   fontSize: screenWidth * 0.036,
                   fontWeight: FontWeight.w400,
@@ -388,6 +392,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
 
   // Monthly Chart Card
   Widget _buildMonthChartCard(double screenWidth, double screenHeight) {
+    var d = AppLocalizations.of(context)!;
     return SizedBox(
       width: screenWidth * 1,
       height: screenHeight * 0.60,
@@ -415,7 +420,7 @@ class _ExpenseStatisticsState extends State<ExpenseStatistics> {
                   isVisible: true,
                   minimum: 0,
                   interval: 80,
-                  title: charts.AxisTitle(text: 'Total Expenses'),
+                  title: charts.AxisTitle(text: d.total_expense),
                 ),
 
                 series: <charts.CartesianSeries>[

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'authBloc/auth_bloc.dart';
 import 'login.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -20,6 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    var d = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: BlocProvider(
@@ -44,7 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             if (state is RegisterSuccessState) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 AnimatedSnackBar.material(
-                  'User signed-up Successfully',
+                d.user_signed_up_successfully,
                   type: AnimatedSnackBarType.success,
                   mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                   duration: const Duration(seconds: 4),
@@ -68,11 +70,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        'Welcome to Budge🆃',
-                        style: TextStyle(
+                        d.welcome,
+                        style: const TextStyle(
                           color: Colors.indigo,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -86,11 +88,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: TextFormField(
                         controller: usernameController,
-                        decoration: const InputDecoration(
-                          hintText: 'Username',
-                          hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-                          prefixIcon: Icon(Icons.account_circle_rounded),
-                          border: OutlineInputBorder(
+                        decoration: InputDecoration(
+                          hintText: d.username,
+                          hintStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                          prefixIcon: const Icon(Icons.account_circle_rounded),
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
                           ),
                         ),
@@ -119,11 +121,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: TextFormField(
                         controller: passwordController,
                         obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: 'Password',
-                          hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-                          prefixIcon: Icon(Icons.lock),
-                          border: OutlineInputBorder(
+                        decoration: InputDecoration(
+                          hintText: d.password,
+                          hintStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                          prefixIcon: const Icon(Icons.lock),
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
                           ),
                         ),
@@ -136,11 +138,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: TextFormField(
                         controller: rePasswordController,
                         obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: 'Re-type Password',
-                          hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-                          prefixIcon: Icon(Icons.lock_reset_rounded),
-                          border: OutlineInputBorder(
+                        decoration: InputDecoration(
+                          hintText: d.retype_password,
+                          hintStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                          prefixIcon: const Icon(Icons.lock_reset_rounded),
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
                           ),
                         ),
@@ -157,7 +159,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               usernameController.text.isEmpty ||
                               rePasswordController.text.isEmpty) {
                             AnimatedSnackBar.material(
-                              'Please fill all fields',
+                              d.please_fill_all_fields,
                               type: AnimatedSnackBarType.info,
                               mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                               duration: const Duration(seconds: 4),
@@ -167,7 +169,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                           if (passwordController.text != rePasswordController.text) {
                             AnimatedSnackBar.material(
-                              'Passwords not match',
+                              d.passwords_not_match,
                               type: AnimatedSnackBarType.warning,
                               mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                               duration: const Duration(seconds: 4),
@@ -186,9 +188,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           backgroundColor: Colors.indigo,
                           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                         ),
-                        child: const Text(
-                          'Sign Up',
-                          style: TextStyle(
+                        child:  Text(
+                          d.sign_up,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
@@ -201,9 +203,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Have an account?',
-                          style: TextStyle(
+                         Text(
+                         d.have_an_account ,
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.black54,
                             fontWeight: FontWeight.w400,
@@ -217,9 +219,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               MaterialPageRoute(builder: (context) => const LoginScreen()),
                             );
                           },
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(
+                          child:  Text(
+                            d.login,
+                            style: const TextStyle(
                               fontSize: 17,
                               color: Colors.blue,
                               fontWeight: FontWeight.w400,

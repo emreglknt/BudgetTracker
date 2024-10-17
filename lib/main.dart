@@ -3,11 +3,13 @@ import 'package:budget_family/presentation/allexpenseBloc/all_expense_bloc.dart'
 import 'package:budget_family/presentation/authBloc/auth_bloc.dart';
 import 'package:budget_family/presentation/budgetBloc/budget_bloc.dart';
 import 'package:budget_family/presentation/currencyBloc/currency_bloc.dart';
-import 'package:budget_family/presentation/login.dart';
+import 'package:budget_family/presentation/splashScreen.dart';
 import 'package:budget_family/utils/getIt.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,12 +45,22 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
+        localizationsDelegates: const[
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale("en",""),
+          Locale("tr",""),
+        ],
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: const LoginScreen(),
+        home: const SplashScreen(),
       ),
     );
   }

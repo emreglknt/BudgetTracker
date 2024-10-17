@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'authBloc/auth_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,7 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -30,7 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -41,6 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    var d = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: BlocProvider(
@@ -48,12 +48,10 @@ class _LoginScreenState extends State<LoginScreen> {
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
             if (state is AuthLoadingState) {
-
               return const Center(child: CircularProgressIndicator());
             }
 
             if (state is AuthErrorState) {
-
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 AnimatedSnackBar.material(
                   state.error,
@@ -65,10 +63,9 @@ class _LoginScreenState extends State<LoginScreen> {
             }
 
             if (state is AuthSuccessState) {
-
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 AnimatedSnackBar.material(
-                  'Logged in Successfully',
+                  d.logged_in_successfully, // Çeviri kullanımı
                   type: AnimatedSnackBarType.success,
                   mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                   duration: const Duration(seconds: 4),
@@ -76,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) =>const  HomeScreen(),
+                    builder: (context) => const HomeScreen(),
                   ),
                 );
               });
@@ -94,12 +91,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: size.width,
                       child: Lottie.asset('assets/finance.json'),
                     ),
-                    const SizedBox(height: 20),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                    SizedBox(height: size.height * 0.01),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        'Welcome to Budge🆃',
-                        style: TextStyle(
+                        d.welcome, // 'Welcome to Budge🆃' yerine
+                        style: const TextStyle(
                           color: Colors.indigo,
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
@@ -107,29 +104,35 @@ class _LoginScreenState extends State<LoginScreen> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(
-                        'Login to your account',
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w500,
+                    SizedBox(height: size.height * 0.06),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          d.login_to_your_account, // 'Login to your account' yerine
+                          style: const TextStyle(
+                            color: Colors.black54,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    SizedBox(height: size.height * 0.04),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: TextFormField(
                         controller: _emailController,
                         decoration: const InputDecoration(
-                          hintText: 'E-mail',
-                          hintStyle: TextStyle(color: Colors.grey, fontWeight: FontWeight.w400),
-                          prefixIcon: Icon(Icons.email),
-                          border: OutlineInputBorder(
+                          hintText: "E-mail",
+                          hintStyle: const TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          prefixIcon: const Icon(Icons.email),
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
                           ),
                         ),
@@ -137,15 +140,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 20),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: TextFormField(
                         controller: _passwordController,
                         obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: 'Password',
-                          hintStyle: TextStyle(color: Colors.grey, fontWeight: FontWeight.w400),
-                          prefixIcon: Icon(Icons.lock),
-                          border: OutlineInputBorder(
+                        decoration: InputDecoration(
+                          hintText: d.password, // 'Password' yerine
+                          hintStyle: const TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          prefixIcon: const Icon(Icons.lock),
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
                           ),
                         ),
@@ -158,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () {
                           if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
                             AnimatedSnackBar.material(
-                              'Please fill all fields',
+                              d.please_fill_all_fields,
                               type: AnimatedSnackBarType.warning,
                               mobileSnackBarPosition: MobileSnackBarPosition.bottom,
                               duration: const Duration(seconds: 3),
@@ -179,9 +185,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                           textStyle: const TextStyle(fontSize: 19, color: Colors.white),
                         ),
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(fontSize: 19, color: Colors.white, fontWeight: FontWeight.w400),
+                        child: Text(
+                          d.login, // 'Login' yerine
+                          style: const TextStyle(
+                            fontSize: 19,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ),
@@ -189,18 +199,28 @@ class _LoginScreenState extends State<LoginScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Don\'t have an account?',
-                          style: TextStyle(fontSize: 15, color: Colors.black54, fontWeight: FontWeight.w400),
+                        Text(
+                          d.dont_have_an_account,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                         const SizedBox(width: 10),
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const RegisterScreen()));
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                            );
                           },
-                          child: const Text(
-                            'Create Account',
-                            style: TextStyle(fontSize: 17, color: Colors.blue, fontWeight: FontWeight.w400),
+                          child: Text(
+                            d.create_account,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
                       ],
